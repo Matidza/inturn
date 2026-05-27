@@ -1,230 +1,239 @@
 import {
   Authenticated,
-  AuthProvider,
-  GitHubBanner,
   Refine,
 } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
+
+import {
+  DevtoolsProvider,
+} from "@refinedev/devtools";
+
+import {
+  RefineKbar,
+  RefineKbarProvider,
+} from "@refinedev/kbar";
 
 import {
   ErrorComponent,
   RefineSnackbarProvider,
-  ThemedLayout,
   useNotificationProvider,
 } from "@refinedev/mui";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
+
 import routerProvider, {
   CatchAllNavigate,
-  DocumentTitleHandler,
-  NavigateToResource,
   UnsavedChangesNotifier,
+  DocumentTitleHandler,
 } from "@refinedev/react-router";
-import axios from "axios";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router";
-import { Header } from "./components/header";
-import { ColorModeContextProvider } from "./contexts/color-mode";
-import { CredentialResponse } from "./interfaces/google";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
-import { Login } from "./pages/login";
-import { dataProvider } from "./providers/data";
-import { parseJwt } from "./utils/parse-jwt";
 
+import axios from "axios";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
+
+// Public Routs
+import { 
+  Applications, 
+  Features, 
+  Login, 
+  Home,
+  CookieSettings,
+  PrivacyPolicy,
+  TermsOfService,
+  Signup
+} from "./pages";
+
+
+import { 
+  AboutUs,
+  Blog,
+  CompanyPortal,
+  ContactUs,
+  HowItWorks,
+  Pricing,
+  ProfessionalPortal,
+  StudentPortal,
+  Support
+} from "./pages/footer";
+
+import { 
+  CompanyDashboard,
+  FindAnswers,
+  InterviewCVTip,
+  ProfessionalDashboard,
+  ReadMore,
+  StudentDashboard
+} from "./pages/more";
+// import { Professionals, ProfessionalCardDetails } from "./pages/mentee";
+import Professionals from "./pages/professionals";
+import ProfessionalCardDetails from "./pages/professionalDetails";
+
+
+import HMM4750 from "./pages/4750";
+import AppRoutes from "./routes/AppRoutes";
+import { parseJwt } from "./utils/parse-jwt";
+import { dataProvider } from "./providers/data";
+import PublicLayout from "./layouts/PublicLayout";
+import { ColorModeContextProvider } from "./contexts/color-mode";
+
+
+
+
+/* Axios */
 const axiosInstance = axios.create();
+
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (config.headers) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
-
   return config;
 });
 
+/* Auth */
+const authProvider = {
+  login: async ({ credential, role }: any) => {
+  const profile = credential ? parseJwt(credential) : null;
+
+  if (profile) {
+    // ✅ USE ROLE FROM UI (fallback to mentee)
+    const finalRole = role || "mentee";
+
+    const user = {
+      ...profile,
+      role: finalRole,
+      avatar: profile.picture,
+      name: profile.name,
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", credential);
+
+    return {
+      success: true,
+      redirectTo:
+        finalRole === "admin"
+          ? "/admin"
+          : finalRole === "professional"
+          ? "/pro"
+          : "/mentee",
+    };
+  }
+
+  return { success: false, redirectTo: "/" };
+},
+
+  logout: async () => {
+    localStorage.clear();
+    return { success: true, redirectTo: "/login" };
+  },
+
+  check: async () => {
+    const token = localStorage.getItem("token");
+
+    return token
+      ? { authenticated: true }
+      : {
+          authenticated: false,
+          redirectTo: "/login",
+          logout: true,
+        };
+  },
+
+  getIdentity: async () => {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  },
+
+  onError: async (error: any) => ({ error }),
+};
+
+/* App */
 function App() {
-  const authProvider: AuthProvider = {
-    login: async ({ credential }: CredentialResponse) => {
-      const profileObj = credential ? parseJwt(credential) : null;
-
-      if (profileObj) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...profileObj,
-            avatar: profileObj.picture,
-          })
-        );
-
-        localStorage.setItem("token", `${credential}`);
-
-        return {
-          success: true,
-          redirectTo: "/",
-        };
-      }
-
-      return {
-        success: false,
-      };
-    },
-    logout: async () => {
-      const token = localStorage.getItem("token");
-
-      if (token && typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        axios.defaults.headers.common = {};
-        window.google?.accounts.id.revoke(token, () => {
-          return {};
-        });
-      }
-
-      return {
-        success: true,
-        redirectTo: "/login",
-      };
-    },
-    onError: async (error) => {
-      console.error(error);
-      return { error };
-    },
-    check: async () => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        return {
-          authenticated: true,
-        };
-      }
-
-      return {
-        authenticated: false,
-        error: {
-          message: "Check failed",
-          name: "Token not found",
-        },
-        logout: true,
-        redirectTo: "/login",
-      };
-    },
-    getPermissions: async () => null,
-    getIdentity: async () => {
-      const user = localStorage.getItem("user");
-      if (user) {
-        return JSON.parse(user);
-      }
-
-      return null;
-    },
-  };
-
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
-        <ColorModeContextProvider>
+        {/* <ColorModeContextProvider> */}
           <CssBaseline />
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+
           <RefineSnackbarProvider>
-            <DevtoolsProvider>
+            {/* <DevtoolsProvider> */}
               <Refine
                 dataProvider={dataProvider}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerProvider}
                 authProvider={authProvider}
-                resources={[
-                  {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                ]}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
-                  projectId: "nkiwLC-btVU3P-Z824cD",
                 }}
               >
                 <Routes>
-                  <Route
+                  
+                  {/* Protected */}
+                  <Route 
                     element={
-                      <Authenticated
-                        key="authenticated-inner"
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayout Header={Header}>
-                          <Outlet />
-                        </ThemedLayout>
+                      <Authenticated fallback={<CatchAllNavigate to="/login" />}>
+                        <Outlet />
                       </Authenticated>
                     }
                   >
-                    <Route
-                      index
-                      element={<NavigateToResource resource="blog_posts" />}
-                    />
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
-                    </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
-                    </Route>
-                    <Route path="*" element={<ErrorComponent />} />
+                    <Route path="/*" element={<AppRoutes />} />
                   </Route>
-                  <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-outer"
-                        fallback={<Outlet />}
-                      >
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
+
+                  {/* Public */}
+                  <Route element={<PublicLayout />}>
+                    
+                    {/* Header Links */}
+                    <Route path="/" element={<Home />}/>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup/>} />
+                    <Route path="/features" element={<Features />}/>
+                    <Route path="/applications" element={<Applications />}/>
+                    <Route path="/professionals" element={<Professionals />}/>
+                    <Route path="/professional-details/:id" element={<ProfessionalCardDetails />}/>
+
+
+                    <Route path="/company-dashboard" element={<CompanyDashboard />}/>
+                    <Route path="/find-answers" element={<FindAnswers />}/>
+                    <Route path="/tips" element={<InterviewCVTip />}/>
+                    <Route path="/professional-dashboard" element={<ProfessionalDashboard />}/>
+                    <Route path="/read-more" element={<ReadMore />}/>
+                    <Route path="/student-dashboard" element={<StudentDashboard />}/>
+
+                    {/* Footer Links */}
+                    <Route path="/student-portal" element={<StudentPortal />}/>
+                    <Route path="/professional-portal" element={<ProfessionalPortal />}/>
+                    <Route path="/company-portal" element={<CompanyPortal />}/>
+                    <Route path="/how-it-works" element={<HowItWorks />}/>
+                    <Route path="/pricing" element={<Pricing />}/>
+                    <Route path="/blog" element={<Blog />}/>
+                    <Route path="/support" element={<Support />}/>
+                    <Route path="/about-us" element={<AboutUs />}/>
+                    <Route path="/contact-us" element={<ContactUs />}/>
+                    
+
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />}/>
+                    <Route path="/terms-of-service" element={<TermsOfService />}/>
+                    <Route path="/250904/0324/4750" element={<HMM4750 />}/>
+                    <Route path="/cookie-settings" element={<CookieSettings />}/>
                   </Route>
+                 
+                  {/* Fallback */}
+                  <Route path="*" element={<ErrorComponent />} />
                 </Routes>
 
                 <RefineKbar />
                 <UnsavedChangesNotifier />
                 <DocumentTitleHandler />
               </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
+            {/* </DevtoolsProvider> */}
           </RefineSnackbarProvider>
-        </ColorModeContextProvider>
+        {/* </ColorModeContextProvider> */}
       </RefineKbarProvider>
     </BrowserRouter>
   );
