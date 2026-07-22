@@ -21,6 +21,7 @@ const INK2   = "#5C5C72";
 const BORDER = "#E8E3F5";
 const GREEN  = "#00916E";
 const GREEN_L= "#ECFDF5";
+const AMB    = "#D97706";
 
 /* ── CSS ─────────────────────────────────────────────────────────────────── */
 const css = `
@@ -304,8 +305,8 @@ const RequestSession: React.FC = () => {
                       </Typography>
                       <Typography sx={{ fontSize:12.5, color:INK2, mt:.25 }}>{pro.role}</Typography>
                       <Stack direction="row" spacing={.5} alignItems="center" mt={.5}>
-                        <Star size={12} fill={P} color={P}/>
-                        <Typography sx={{ fontSize:12.5, fontWeight:600, color:INK }}>{pro.rating}</Typography>
+                        <Star size={12} fill={AMB} color={AMB}/>
+                        <Typography sx={{ fontSize:12.5, fontWeight:600, color:AMB }}>{pro.rating}</Typography>
                         <Typography sx={{ fontSize:12, color:INK2 }}>({pro.reviews} reviews)</Typography>
                       </Stack>
                     </Box>

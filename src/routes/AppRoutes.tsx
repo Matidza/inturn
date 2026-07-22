@@ -22,8 +22,11 @@ import {
   PaySession,
   PaymentDeclined,
   PaymentSuccess,
-  AIInterviewHome
+  AIInterviewHome,
+  AIInterviewDetail
 } from "../pages/mentee";
+
+
 
 import {
   AIPracticeInfo,
@@ -142,6 +145,7 @@ const AppRoutes = () => {
         <Route path="professionals" element={<Professionals />} />
         <Route path="ai-practice" element={<AIPractice />} />
         <Route path="ai-home" element={<AIInterviewHome />} />
+        <Route path="ai-interview/:id" element={<AIInterviewDetail />} />
         <Route path="cv-analyzer" element={<Analyzer />} />
         <Route path="interviews" element={<Interviews />} />
         <Route path="applications" element={<Applications />} />
@@ -157,20 +161,6 @@ const AppRoutes = () => {
         <Route path="payment-declined" element={<PaymentDeclined />} />
         <Route path="payment-successful" element={<PaymentSuccess />} />
 
-        {/* Footer / Info pages */}
-        <Route path="professionals-portal" element={<ProfessionalPortal />} />
-        <Route path="ai-info" element={<AIPracticeInfo />} />
-        <Route path="cv-info" element={<CVAnalyzerInfo />} />
-        <Route path="how-it-works" element={<HowItWorks />} />
-        <Route path="tips" element={<Tip />} />
-        <Route path="pricing" element={<Pricing />} />
-        <Route path="blog" element={<Blog />} />
-        <Route path="support" element={<Support />} />
-        <Route path="about-us" element={<AboutUs />} />
-        <Route path="contact-us" element={<ContactUs />} />
-        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="terms-of-service" element={<TermsOfService />} />
-        <Route path="cookie-settings" element={<CookieSettings />} />
       </Route>
 
       {/* fallback */}

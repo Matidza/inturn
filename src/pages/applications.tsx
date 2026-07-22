@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from "react";
 import {
   Box,
@@ -17,19 +16,37 @@ import {
   useMediaQuery,
   Alert,
   Skeleton,
+  Slider,
+  FormControl,
+  InputLabel,
+  Select,
+  Checkbox,
+  FormControlLabel,
+  Badge,
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import TuneIcon from "@mui/icons-material/Tune";
-
-import { Search as SearchIcon, Clock as ClockIcon, Tag } from "lucide-react";
+import CloseIcon from "@mui/icons-material/Close";
 
 // ── Constants ──
 const PRIMARY = "#7F42E7";
-const P = "#7F42E7"; const P_DARK = "#5E2EC5"; const P_LITE = "#F0EAFD";
-const INK = "#0D0D12"; const INK2 = "#5C5C72"; const BORDER = "#E8E3F5"; const OFF = "#F7F6FC";
+const MAX_SALARY = 150000;
+
+// ── Salary parser helper ──
+const parseSalaryMin = (salaryStr: string): number => {
+  const match = salaryStr.match(/R([\d]+)k/);
+  return match ? parseInt(match[1]) * 1000 : 0;
+};
+const parseSalaryMax = (salaryStr: string): number => {
+  const matches = salaryStr.match(/R([\d]+)k/g);
+  if (!matches || matches.length < 2) return MAX_SALARY;
+  const last = matches[matches.length - 1].replace("R", "").replace("k", "");
+  return parseInt(last) * 1000;
+};
+
 // ── Types ──
 interface Job {
   id: number;
@@ -274,33 +291,259 @@ const JobDetail = ({ job, isMobile }: { job: Job; isMobile: boolean }) => (
   </Box>
 );
 
+// ── Filter Drawer ──
+interface FilterState {
+  jobType: string[];
+  location: string;
+  salaryRange: [number, number];
+  skills: string[];
+}
+
+const ALL_JOB_TYPES = ["Full-Time", "Part-Time", "Contract", "Internship", "Remote"];
+const ALL_LOCATIONS = ["All", "Remote", "Sandton", "Cape Town", "Johannesburg", "Pretoria", "Durban"];
+const ALL_SKILLS = ["React", "TypeScript", "Python", "SQL", "Node.js", "Docker", "AWS", "Power BI", "Next.js"];
+
+const FilterDrawer = ({
+  open,
+  onClose,
+  filters,
+  setFilters,
+  onReset,
+  activeCount,
+}: {
+  open: boolean;
+  onClose: () => void;
+  filters: FilterState;
+  setFilters: (f: FilterState) => void;
+  onReset: () => void;
+  activeCount: number;
+}) => {
+  const toggleJobType = (type: string) => {
+    const updated = filters.jobType.includes(type)
+      ? filters.jobType.filter((t) => t !== type)
+      : [...filters.jobType, type];
+    setFilters({ ...filters, jobType: updated });
+  };
+
+  const toggleSkill = (skill: string) => {
+    const updated = filters.skills.includes(skill)
+      ? filters.skills.filter((s) => s !== skill)
+      : [...filters.skills, skill];
+    setFilters({ ...filters, skills: updated });
+  };
+
+  return (
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100vw", sm: 380 },
+          maxWidth: "100vw",
+          px: 3,
+          py: 3,
+          boxSizing: "border-box",
+          overflowX: "hidden",
+        },
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography fontWeight={700} fontSize={18}>Filters</Typography>
+        <IconButton size="small" onClick={onClose}><CloseIcon /></IconButton>
+      </Stack>
+
+      <Stack spacing={3} sx={{ overflowY: "auto", flex: 1 }}>
+        {/* Job Type */}
+        <Box>
+          <Typography fontWeight={700} fontSize={14} mb={1.5}>Job Type</Typography>
+          <Stack direction="row" flexWrap="wrap" gap={1}>
+            {ALL_JOB_TYPES.map((type) => (
+              <Chip
+                key={type}
+                label={type}
+                onClick={() => toggleJobType(type)}
+                sx={{
+                  borderRadius: 2,
+                  fontWeight: filters.jobType.includes(type) ? 700 : 400,
+                  bgcolor: filters.jobType.includes(type) ? PRIMARY : "transparent",
+                  color: filters.jobType.includes(type) ? "#fff" : "#555",
+                  border: filters.jobType.includes(type) ? "none" : "1px solid #ddd",
+                  cursor: "pointer",
+                  "&:hover": { bgcolor: filters.jobType.includes(type) ? "#6a35c9" : "#f5f5f5" },
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
+
+        <Divider />
+
+        {/* Location */}
+        <Box>
+          <Typography fontWeight={700} fontSize={14} mb={1.5}>Location</Typography>
+          <FormControl fullWidth size="small">
+            <InputLabel sx={{ "&.Mui-focused": { color: PRIMARY } }}>Location</InputLabel>
+            <Select
+              value={filters.location}
+              label="Location"
+              onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+              sx={{ borderRadius: 2, "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: PRIMARY } }}
+            >
+              {ALL_LOCATIONS.map((loc) => (
+                <MenuItem key={loc} value={loc}>{loc}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Divider />
+
+        {/* Salary Range */}
+        <Box>
+          <Typography fontWeight={700} fontSize={14} mb={2}>Salary Range (per month)</Typography>
+          <Slider
+            value={filters.salaryRange}
+            onChange={(_, val) => setFilters({ ...filters, salaryRange: val as [number, number] })}
+            valueLabelDisplay="auto"
+            valueLabelFormat={(v) => `R${(v / 1000).toFixed(0)}k`}
+            min={0}
+            max={MAX_SALARY}
+            step={5000}
+            sx={{ color: PRIMARY }}
+          />
+          <Stack direction="row" justifyContent="space-between" mt={1}>
+            <Box sx={{ border: "1px solid #eee", borderRadius: 2, px: 1.5, py: 0.8, minWidth: 80, textAlign: "center" }}>
+              <Typography fontSize={11} color="text.secondary">Min</Typography>
+              <Typography fontSize={13} fontWeight={700}>R{(filters.salaryRange[0] / 1000).toFixed(0)}k</Typography>
+            </Box>
+            <Box sx={{ border: "1px solid #eee", borderRadius: 2, px: 1.5, py: 0.8, minWidth: 80, textAlign: "center" }}>
+              <Typography fontSize={11} color="text.secondary">Max</Typography>
+              <Typography fontSize={13} fontWeight={700}>R{(filters.salaryRange[1] / 1000).toFixed(0)}k</Typography>
+            </Box>
+          </Stack>
+        </Box>
+
+        <Divider />
+
+        {/* Skills */}
+        <Box>
+          <Typography fontWeight={700} fontSize={14} mb={1.5}>Skills / Tech Stack</Typography>
+          <Stack direction="row" flexWrap="wrap" gap={1}>
+            {ALL_SKILLS.map((skill) => (
+              <Chip
+                key={skill}
+                label={skill}
+                onClick={() => toggleSkill(skill)}
+                sx={{
+                  borderRadius: 2,
+                  fontWeight: filters.skills.includes(skill) ? 700 : 400,
+                  bgcolor: filters.skills.includes(skill) ? "#f5f0fd" : "transparent",
+                  color: filters.skills.includes(skill) ? PRIMARY : "#555",
+                  border: filters.skills.includes(skill) ? `1px solid ${PRIMARY}` : "1px solid #ddd",
+                  cursor: "pointer",
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
+
+        <Divider />
+      </Stack>
+
+      <Stack spacing={1.5} mt={3}>
+        {activeCount > 0 && (
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => { onReset(); onClose(); }}
+            sx={{ borderRadius: 3, textTransform: "none", borderColor: "#ddd", color: "#555" }}
+          >
+            Clear all filters
+          </Button>
+        )}
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onClose}
+          sx={{
+            borderRadius: 3,
+            textTransform: "none",
+            fontWeight: 700,
+            backgroundColor: PRIMARY,
+            "&:hover": { backgroundColor: "#6a35c9" },
+          }}
+        >
+          Show Results
+        </Button>
+      </Stack>
+    </Drawer>
+  );
+};
+
 // ── Main component ──
 const Applications = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("");
+  const [level, setLevel] = useState("");
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job>(extendedJobs[0]);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loading] = useState(false); // swap for real loading state when using API
+  const [loading] = useState(false);
+
+  const defaultFilters: FilterState = {
+    jobType: [],
+    location: "All",
+    salaryRange: [0, MAX_SALARY],
+    skills: [],
+  };
+  const [advancedFilters, setAdvancedFilters] = useState<FilterState>(defaultFilters);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (advancedFilters.jobType.length > 0) count++;
+    if (advancedFilters.location !== "All") count++;
+    if (advancedFilters.salaryRange[0] > 0 || advancedFilters.salaryRange[1] < MAX_SALARY) count++;
+    if (advancedFilters.skills.length > 0) count++;
+    return count;
+  }, [advancedFilters]);
 
   const filtered = useMemo(() => {
     const lower = search.toLowerCase().trim();
     return extendedJobs
-      .filter(
-        (job) =>
-          !lower ||
-          job.title.toLowerCase().includes(lower) ||
-          job.company.toLowerCase().includes(lower) ||
-          job.location.toLowerCase().includes(lower)
+      .filter((job) =>
+        !lower ||
+        job.title.toLowerCase().includes(lower) ||
+        job.company.toLowerCase().includes(lower) ||
+        job.location.toLowerCase().includes(lower)
+      )
+      .filter((job) => (level ? job.level.toLowerCase() === level.toLowerCase() : true))
+      .filter((job) =>
+        advancedFilters.jobType.length === 0 ||
+        advancedFilters.jobType.some((t) => t.toLowerCase() === job.type.toLowerCase() ||
+          (t === "Remote" && job.location.toLowerCase() === "remote"))
       )
       .filter((job) =>
-        filter ? job.level.toLowerCase() === filter.toLowerCase() : true
+        advancedFilters.location === "All" ||
+        job.location.toLowerCase() === advancedFilters.location.toLowerCase()
+      )
+      .filter((job) => {
+        const min = parseSalaryMin(job.salary);
+        const max = parseSalaryMax(job.salary);
+        return max >= advancedFilters.salaryRange[0] && min <= advancedFilters.salaryRange[1];
+      })
+      .filter((job) =>
+        advancedFilters.skills.length === 0 ||
+        advancedFilters.skills.every((skill) =>
+          job.skills.some((s) => s.toLowerCase() === skill.toLowerCase()) ||
+          job.tools.some((t) => t.toLowerCase() === skill.toLowerCase())
+        )
       );
-  }, [search, filter]);
+  }, [search, level, advancedFilters]);
 
-  const hasActiveFilters = !!search || !!filter;
+  const hasActiveFilters = !!search || !!level || activeFilterCount > 0;
 
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);
@@ -309,7 +552,8 @@ const Applications = () => {
 
   const resetFilters = () => {
     setSearch("");
-    setFilter("");
+    setLevel("");
+    setAdvancedFilters(defaultFilters);
   };
 
   return (
@@ -318,7 +562,7 @@ const Applications = () => {
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFFFF",
         overflowX: "hidden",
       }}
     >
@@ -349,18 +593,31 @@ const Applications = () => {
                 </InputAdornment>
               ),
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: PRIMARY },
+              },
+            }}
           />
 
           <TextField
             size="small"
             select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            sx={{ minWidth: 160 }}
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            sx={{
+              minWidth: 160,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: PRIMARY },
+              },
+              "& .MuiInputLabel-root.Mui-focused": { color: PRIMARY },
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <TuneIcon fontSize="small" sx={{ color: "#aaa" }} />
+                  <WorkOutlineIcon fontSize="small" sx={{ color: "#aaa" }} />
                 </InputAdornment>
               ),
             }}
@@ -370,6 +627,25 @@ const Applications = () => {
             <MenuItem value="mid">Mid</MenuItem>
             <MenuItem value="senior">Senior</MenuItem>
           </TextField>
+
+          <Badge badgeContent={activeFilterCount} color="secondary" sx={{ flexShrink: 0 }}>
+            <Button
+              variant="outlined"
+              startIcon={<TuneIcon />}
+              onClick={() => setFilterDrawerOpen(true)}
+              sx={{
+                textTransform: "none",
+                borderColor: activeFilterCount > 0 ? PRIMARY : "#ddd",
+                color: activeFilterCount > 0 ? PRIMARY : "#555",
+                borderRadius: 3,
+                fontWeight: activeFilterCount > 0 ? 700 : 400,
+                whiteSpace: "nowrap",
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
+              Filters
+            </Button>
+          </Badge>
 
           {hasActiveFilters && (
             <Button
@@ -382,15 +658,43 @@ const Applications = () => {
                 flexShrink: 0,
               }}
             >
-              Clear
+              Clear all
             </Button>
           )}
         </Stack>
+
+        {/* Active filter chips */}
+        {(advancedFilters.jobType.length > 0 || advancedFilters.location !== "All" || advancedFilters.skills.length > 0) && (
+          <Stack direction="row" flexWrap="wrap" gap={0.75} mt={1.5}>
+            {advancedFilters.jobType.map((type) => (
+              <Chip
+                key={type}
+                label={type}
+                size="small"
+                onDelete={() => setAdvancedFilters({ ...advancedFilters, jobType: advancedFilters.jobType.filter((t) => t !== type) })}
+                sx={{ bgcolor: "#f5f0fd", color: PRIMARY, fontSize: 11 }}
+              />
+            ))}
+            {advancedFilters.location !== "All" && (
+              <Chip
+                label={`📍 ${advancedFilters.location}`}
+                size="small"
+                onDelete={() => setAdvancedFilters({ ...advancedFilters, location: "All" })}
+                sx={{ bgcolor: "#f5f0fd", color: PRIMARY, fontSize: 11 }}
+              />
+            )}
+            {advancedFilters.skills.map((skill) => (
+              <Chip
+                key={skill}
+                label={skill}
+                size="small"
+                onDelete={() => setAdvancedFilters({ ...advancedFilters, skills: advancedFilters.skills.filter((s) => s !== skill) })}
+                sx={{ bgcolor: "#f5f0fd", color: PRIMARY, fontSize: 11 }}
+              />
+            ))}
+          </Stack>
+        )}
       </Box>
-      {/* <Box sx={{ maxWidth:480, mx:"auto", position:"relative" }}>
-        <SearchIcon  style={{ position:"absolute", left:16, top:"50%", transform:"translateY(-50%)", color:INK2 }}/>
-        <input className="input-field" style={{ paddingLeft:42 }} placeholder="Search articles..."  onChange={e=>setSearch(e.target.value)}/>
-      </Box> */}
 
       {/* ── Title row ── */}
       <Box sx={{ px: { xs: 2, md: 4 }, pt: 2.5, pb: 1 }}>
@@ -535,375 +839,18 @@ const Applications = () => {
 
         {selectedJob && <JobDetail job={selectedJob} isMobile={true} />}
       </Drawer>
+
+      {/* ── Advanced Filter Drawer ── */}
+      <FilterDrawer
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        filters={advancedFilters}
+        setFilters={setAdvancedFilters}
+        onReset={resetFilters}
+        activeCount={activeFilterCount}
+      />
     </Box>
   );
 };
 
 export default Applications;
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useMemo, useState } from "react";
-// import {
-//   Box,
-//   Typography,
-//   TextField,
-//   MenuItem,
-//   Card,
-//   Button,
-//   Stack,
-//   Chip,
-//   Divider,
-//   InputAdornment,
-//   Drawer,
-//   IconButton,
-//   useTheme,
-//   useMediaQuery,
-// } from "@mui/material";
-
-// import SearchIcon from "@mui/icons-material/Search";
-// import LocationOnIcon from "@mui/icons-material/LocationOn";
-// import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
-// const PRIMARY = "#7F42E7";
-
-// /* MOCK DATA (same as yours, shortened here) */
-// const jobsMock = [
-//   {
-//     id: 1,
-//     title: "Frontend Developer",
-//     company: "Sportserve",
-//     location: "Remote",
-//     type: "Full-Time",
-//     level: "Mid",
-//     salary: "R45k - R70k",
-//     skills: ["React", "TypeScript", "Next.js", "Tailwind"],
-//     deadline: "30 May 2026",
-
-//     description: `Sportserve forms part of a global group of sports betting and sportsbook technology companies. 
-// We are focused on delivering world-class digital experiences to millions of users worldwide.
-
-// We are looking for a Frontend Developer who is passionate about building scalable and performant web applications. 
-// You will work closely with product, design, and backend teams to bring ideas to life.`,
-
-//     responsibilities: [
-//       "Develop modern frontend applications using React and Next.js",
-//       "Collaborate with designers and backend engineers",
-//       "Build reusable UI components",
-//       "Optimize applications for performance and scalability",
-//       "Participate in code reviews and technical discussions",
-//     ],
-
-//     requirements: [
-//       "3+ years experience with JavaScript / TypeScript",
-//       "Strong experience with React or similar frameworks",
-//       "Understanding of REST APIs",
-//       "Experience with Git and version control",
-//       "Strong problem-solving skills",
-//     ],
-
-//     tools: [
-//       "React",
-//       "Next.js",
-//       "Docker",
-//       "GitLab CI/CD",
-//       "TailwindCSS",
-//     ],
-//   },
-
-//   {
-//     id: 2,
-//     title: "Data Analyst",
-//     company: "Discovery",
-//     location: "Sandton",
-//     type: "Full-Time",
-//     level: "Entry",
-//     salary: "R25k - R40k",
-//     skills: ["Python", "SQL", "Power BI"],
-
-//     description: `Discovery is seeking a Data Analyst to join our analytics team.
-// You will work with large datasets to generate insights that drive business decisions.`,
-
-//     responsibilities: [
-//       "Analyze large datasets to extract insights",
-//       "Build dashboards and reports",
-//       "Work with stakeholders to understand data needs",
-//       "Ensure data accuracy and integrity",
-//     ],
-
-//     requirements: [
-//       "Degree in Data Science, Statistics or related field",
-//       "Strong SQL and Python skills",
-//       "Experience with Power BI or Tableau",
-//       "Analytical mindset",
-//     ],
-
-//     tools: ["Python", "SQL", "Power BI", "Excel"],
-//   },
-
-//   {
-//     id: 3,
-//     title: "Backend Engineer",
-//     company: "Takealot",
-//     location: "Cape Town",
-//     type: "Full-Time",
-//     level: "Mid",
-//     salary: "R50k - R80k",
-//     skills: ["Node.js", "Express", "PostgreSQL", "Docker"],
-
-//     description: `Join Takealot’s backend team and help build scalable systems 
-// that power one of South Africa’s largest e-commerce platforms.`,
-
-//     responsibilities: [
-//       "Design and build scalable APIs",
-//       "Work with databases and optimize queries",
-//       "Ensure system reliability and performance",
-//       "Collaborate with frontend teams",
-//     ],
-
-//     requirements: [
-//       "Experience with Node.js and Express",
-//       "Strong understanding of databases",
-//       "Experience with cloud platforms",
-//       "Knowledge of system design",
-//     ],
-
-//     tools: ["Node.js", "PostgreSQL", "Docker", "AWS"],
-//   },
-
-//   // 👉 You can duplicate and vary this pattern to reach 30+
-// ];
-
-
-// const extendedJobs = Array.from({ length: 30 }).map((_, i) => ({
-//   ...jobsMock[i % jobsMock.length],
-//   id: i,
-// }));
-
-// const Applications = () => {
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-//   const [search, setSearch] = useState("");
-//   const [filter, setFilter] = useState("");
-//   const [selectedJob, setSelectedJob] = useState(extendedJobs[0]);
-//   const [mobileOpen, setMobileOpen] = useState(false);
-
-//   const filtered = useMemo(() => {
-//     return extendedJobs
-//       .filter(
-//         (job) =>
-//           job.title.toLowerCase().includes(search.toLowerCase()) ||
-//           job.company.toLowerCase().includes(search.toLowerCase())
-//       )
-//       .filter((job) =>
-//         filter ? job.level.toLowerCase() === filter.toLowerCase() : true
-//       );
-//   }, [search, filter]);
-
-//   const handleJobClick = (job: any) => {
-//     setSelectedJob(job);
-//     if (isMobile) setMobileOpen(true);
-//   };
-
-//   /* ---------------- JOB DETAILS COMPONENT ---------------- */
-//   const JobDetails = ({ job }: any) => (
-//     <Box p={isMobile ? 2 : 4} maxWidth={800}>
-//       <Typography fontSize={24} fontWeight={700}>
-//         {job.title}
-//       </Typography>
-
-//       <Typography color="#777" mb={2}>
-//         {job.company} • {job.location}
-//       </Typography>
-
-//       <Stack direction="row" justifyContent="space-between" mb={3}>
-//         <Stack direction="row" spacing={1}>
-//           <Chip label={job.type} />
-//           <Chip label={job.level} />
-//         </Stack>
-
-//         <Button
-//           variant="contained"
-//           sx={{
-//             backgroundColor: PRIMARY,
-//             borderRadius: 6,
-//             px: 3,
-//             textTransform: "none",
-//           }}
-//         >
-//           Apply
-//         </Button>
-//       </Stack>
-
-//       <Divider sx={{ my: 2 }} />
-
-//       <Typography mb={2}>{job.description}</Typography>
-
-//       <Typography fontWeight={600}>Responsibilities</Typography>
-//       <ul>
-//         {job.responsibilities.map((r: string, i: number) => (
-//           <li key={i}>{r}</li>
-//         ))}
-//       </ul>
-
-//       <Typography fontWeight={600}>Requirements</Typography>
-//       <ul>
-//         {job.requirements.map((r: string, i: number) => (
-//           <li key={i}>{r}</li>
-//         ))}
-//       </ul>
-
-//       <Stack direction="row" gap={1} mt={2} flexWrap="wrap">
-//         {job.tools.map((t: string, i: number) => (
-//           <Chip key={i} label={t} />
-//         ))}
-//       </Stack>
-
-//       <Divider sx={{ my: 3 }} />
-
-//       <Typography fontWeight={600}>{job.salary}</Typography>
-//     </Box>
-//   );
-
-//   return (
-//     <Box sx={{ px: { xs: 2, md: 6 }, py: 3 }}>
-//       {/* SEARCH */}
-//       <Stack direction={{ xs: "column", sm: "row" }} spacing={1} mb={3}>
-//         <TextField
-//           size="small"
-//           fullWidth
-//           placeholder="Search jobs..."
-//           value={search}
-//           onChange={(e) => setSearch(e.target.value)}
-//           InputProps={{
-//             startAdornment: (
-//               <InputAdornment position="start">
-//                 <SearchIcon />
-//               </InputAdornment>
-//             ),
-//           }}
-//         />
-
-//         <TextField
-//           size="small"
-//           select
-//           value={filter}
-//           onChange={(e) => setFilter(e.target.value)}
-//           sx={{ minWidth: 150 }}
-//         >
-//           <MenuItem value="">All</MenuItem>
-//           <MenuItem value="entry">Entry</MenuItem>
-//           <MenuItem value="mid">Mid</MenuItem>
-//         </TextField>
-//       </Stack>
-
-//       {/* LAYOUT */}
-//       <Stack direction="row">
-//         {/* LEFT LIST */}
-//         <Box sx={{ width: isMobile ? "100%" : "35%" }}>
-//           <Stack spacing={2}>
-//             {filtered.map((job) => (
-//               // <Card
-//               //   key={job.id}
-//               //   onClick={() => handleJobClick(job)}
-//               //   sx={{
-//               //     p: 2,
-//               //     cursor: "pointer",
-//               //     border:
-//               //       selectedJob.id === job.id
-//               //         ? `2px solid ${PRIMARY}`
-//               //         : "1px solid #eee",
-//               //   }}
-//               // >
-//               //   <Typography fontWeight={600}>{job.title}</Typography>
-//               //   <Typography fontSize={13} color="#777">
-//               //     {job.company}
-//               //   </Typography>
-//               // </Card>
-//               <Card
-//                 key={job.id}
-//                 onClick={() => handleJobClick(job)}
-//                 sx={{
-//                   p: 2,
-//                   cursor: "pointer",
-//                   borderRadius: 3,
-//                   border:
-//                     selectedJob.id === job.id
-//                       ? `2px solid ${PRIMARY}`
-//                       : "1px solid #eee",
-//                   "&:hover": { boxShadow: 3 },
-//                 }}
-//               >
-//                 <Typography fontWeight={600}>{job.title}</Typography>
-//                 <Typography fontSize={13} color="#777">
-//                   {job.company} • {job.location}
-//                 </Typography>
-
-//                 <Stack direction="row" spacing={1} mt={1}>
-//                   <Chip label={job.type} size="small" />
-//                   <Chip label={job.level} size="small" />
-//                 </Stack>
-
-//                 <Typography fontSize={12} mt={1}>
-//                   💰 {job.salary}
-//                 </Typography>
-//               </Card>
-//             ))}
-//           </Stack>
-//         </Box>
-
-//         {/* RIGHT (DESKTOP ONLY) */}
-//         {!isMobile && (
-//           <Box
-//             sx={{
-//                 flex: 1,
-//                 p: 4,
-//                 position: "sticky",
-//                 top: 0,
-//                 height: "100vh",
-//                 overflowY: "auto",
-//                 background: "#fff",
-//               }}
-//           >
-//             <JobDetails  job={selectedJob} />
-//           </Box>
-//         )}
-//       </Stack>
-
-//       {/* MOBILE DRAWER */}
-//       <Drawer
-//         anchor="bottom"
-//         open={mobileOpen}
-//         onClose={() => setMobileOpen(false)}
-//         PaperProps={{
-//           sx: {
-//             height: "90%",
-//             borderTopLeftRadius: 16,
-//             borderTopRightRadius: 16,
-//           },
-//         }}
-//       >
-//         <Box display="flex" alignItems="center" p={1}>
-//           <IconButton onClick={() => setMobileOpen(false)}>
-//             <ArrowBackIcon />
-//           </IconButton>
-//           <Typography fontWeight={600}>Job Details</Typography>
-//         </Box>
-
-//         {selectedJob && <JobDetails job={selectedJob} />}
-//       </Drawer>
-//     </Box>
-//   );
-// };
-
-// export default Applications;
-

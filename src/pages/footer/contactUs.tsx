@@ -139,13 +139,13 @@ export const ContactUs = () => {
                       <Grid item xs={12} sm={6}>
                         <div className="form-group">
                           <label className="form-label">Full name</label>
-                          <input className="input-field" placeholder="Thando Mokoena" value={form.name} onChange={set("name")}/>
+                          <input className="input-field" placeholder="Zwivhuya Mukwevho" value={form.name} onChange={set("name")}/>
                         </div>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <div className="form-group">
                           <label className="form-label">Email</label>
-                          <input className="input-field" type="email" placeholder="thando@email.com" value={form.email} onChange={set("email")}/>
+                          <input className="input-field" type="email" placeholder="zwivhuya@email.com" value={form.email} onChange={set("email")}/>
                         </div>
                       </Grid>
                     </Grid>

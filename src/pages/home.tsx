@@ -1318,9 +1318,22 @@ const P_DARK = "#5E2EC5";
 const P_LIGHT = "#F0EAFD";
 const P_MID = "#B893F6";
 const OFF_WHITE = "#FAFAFA";
-const INK = "#0D0D12";
-const INK2 = "#4A4A5A";
+
+const PD     = "#5E2EC5";
+const PM     = "#B893F6";
+const PL     = "#F0EAFD";
+const INK    = "#0D0D12";
+const INK2   = "#4A4A5A";
+const INK3   = "#8A8AA0";
 const BORDER = "#E8E3F5";
+const OFF    = "#F7F6FC";
+const WHITE  = "#FFFFFF";
+const GRN    = "#059669";
+const GRNL   = "#ECFDF5";
+const AMB    = "#D97706";
+const AMBL   = "#FFFBEB";
+const RED    = "#DC2626";
+const REDL   = "#FEF2F2";
 
 // ─── FONT STACKS ──────────────────────────────────────────────────────────────
 const FONT_DISPLAY = "'Arial Black', 'Arial Bold', 'Helvetica Neue', sans-serif";
@@ -1537,7 +1550,8 @@ const Home = () => {
         <Box
           ref={heroRef}
           sx={{
-            background: `linear-gradient(160deg, ${P_LIGHT} 0%, #fff 60%)`,
+            // background: `linear-gradient(160deg, ${P_LIGHT} 0%, #fff 60%)`,
+            background:`linear-gradient(160deg,${PL} 0%,${WHITE} 60%)`,
             pt: { xs: 8, md: 14 },
             pb: { xs: 10, md: 16 },
             px: { xs: 3, md: 8 },
@@ -2130,3 +2144,160 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
+
+
+
+
+
+// import React from "react";
+// import { Box, Container, Typography, Stack, Grid, Card, Button } from "@mui/material";
+// import { Toolbar } from "@mui/material";
+// import { Link } from "react-router-dom";
+// import { AppBar } from "@mui/material";
+// import { CardContent } from "@mui/material";
+// import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+// import ShieldIcon from "@mui/icons-material/Shield";
+// import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+
+// const Home: React.FC = () => {
+//   return (
+//     <Box sx={{ bgcolor: "background.default", color: "text.primary", minHeight: "100vh" }}>
+      
+//       {/* HEADER */}
+//       <AppBar position="sticky" sx={{ bgcolor: "background.paper", backgroundImage: "none", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+//         <Container maxWidth="lg">
+//           <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+//             <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main", letterSpacing: "1px" }}>
+//               finTax<Box component="span" sx={{ color: "secondary.main" }}>.</Box>
+//             </Typography>
+//             <Stack direction="row" spacing={3} alignItems="center">
+//               <Link href="#features" color="text.secondary" underline="none" sx={{ "&:hover": { color: "primary.main" } }}>Features</Link>
+//               <Link href="#trust" color="text.secondary" underline="none" sx={{ "&:hover": { color: "primary.main" } }}>Security</Link>
+//               <Button variant="contained" color="primary" sx={{ boxShadow: "0px 0px 15px rgba(0, 240, 255, 0.3)" }}>
+//                 Launch App
+//               </Button>
+//             </Stack>
+//           </Toolbar>
+//         </Container>
+//       </AppBar>
+
+//       {/* BODY / HERO SECTION */}
+//       <Container maxWidth="lg" sx={{ pt: { xs: 8, md: 12 }, pb: 8 }}>
+//         <Grid container spacing={6} alignItems="center">
+//           <Grid item xs={12} md={7}>
+//             <Box sx={{ inlineSize: "fit-content", px: 2, py: 0.5, bgcolor: "rgba(112, 0, 255, 0.1)", border: "1px solid #7000FF", borderRadius: "20px", mb: 3 }}>
+//               <Typography variant="caption" sx={{ color: "secondary.main", fontWeight: 600, display: "flex", alignItems: "center", gap: 1 }}>
+//                 <AutoAwesomeIcon fontSize="small" /> Next-Gen SARS Automation
+//               </Typography>
+//             </Box>
+//             <Typography variant="h1" sx={{ fontSize: { xs: "2.5rem", md: "4rem" }, mb: 3 }}>
+//               The Future of South African <Box component="span" sx={{ color: "primary.main" }}>Tax Automation</Box>
+//             </Typography>
+//             <Typography variant="h6" sx={{ color: "text.secondary", mb: 4, fontWeight: 400, lineHeight: 1.6 }}>
+//               Connect your bank feeds, upload your IRP5, and let our secure, AI-driven core optimize your eFiling submission automatically. Fully compliant with current 2026 SARS frameworks.
+//             </Typography>
+//             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+//               <Button variant="contained" size="large" color="primary" sx={{ px: 4, py: 1.5 }}>
+//                 Automate Your Taxes Now
+//               </Button>
+//               <Button variant="outlined" size="large" sx={{ borderColor: "rgba(255,255,255,0.2)", color: "#FFF", "&:hover": { borderColor: "primary.main" } }}>
+//                 See How It Works
+//               </Button>
+//             </Stack>
+//           </Grid>
+
+//           {/* FUTURISTIC VISUAL ELEMENT */}
+//           <Grid item xs={12} md={5}>
+//             <Box sx={{
+//               position: "relative",
+//               p: 4,
+//               borderRadius: "24px",
+//               background: "linear-gradient(135deg, #12192C 0%, #0A0F1D 100%)",
+//               border: "1px solid rgba(0, 240, 255, 0.15)",
+//               boxShadow: "0px 20px 40px rgba(0,0,0,0.5), inset 0px 0px 30px rgba(0, 240, 255, 0.05)"
+//             }}>
+//               <Typography sx={{ fontFamily: "monospace", color: "primary.main", mb: 1 }}>&gt; initializing_sars_sync...</Typography>
+//               <Typography sx={{ fontFamily: "monospace", color: "text.secondary", fontSize: "0.85rem", mb: 2 }}>Calculating Section 11(F) deductions...</Typography>
+//               <Box sx={{ height: "4px", width: "100%", bgcolor: "rgba(255,255,255,0.05)", borderRadius: "2px", mb: 3, overflow: "hidden" }}>
+//                 <Box sx={{ height: "100%", width: "78%", bgcolor: "primary.main", boxShadow: "0 0 8px #00F0FF" }} />
+//               </Box>
+//               <Stack spacing={2}>
+//                 <Box sx={{ display: "flex", justifyContent: "space-between", p: 2, bgcolor: "rgba(0,0,0,0.2)", borderRadius: "8px" }}>
+//                   <Typography variant="body2">Estimated Refund</Typography>
+//                   <Typography variant="body2" sx={{ color: "success.main", fontWeight: 700 }}>R 14,850.00</Typography>
+//                 </Box>
+//               </Stack>
+//             </Box>
+//           </Grid>
+//         </Grid>
+
+//         {/* TRUST / VALUES SECTION */}
+//         <Box id="trust" sx={{ mt: { xs: 10, md: 16 } }}>
+//           <Grid container spacing={4}>
+//             <Grid item xs={12} md={4}>
+//               <Card sx={{ bgcolor: "background.paper", backgroundImage: "none", border: "1px solid rgba(255,255,255,0.03)" }}>
+//                 <CardContent sx={{ p: 3 }}>
+//                   <ShieldIcon sx={{ color: "primary.main", fontSize: 40, mb: 2 }} />
+//                   <Typography variant="h6" sx={{ mb: 1 }}>Bank-Grade Security</Typography>
+//                   <Typography variant="body2" color="text.secondary">
+//                     End-to-end encryption keeping your financial identities completely anonymous and secure under POPIA standards.
+//                   </Typography>
+//                 </CardContent>
+//               </Card>
+//             </Grid>
+//             <Grid item xs={12} md={4}>
+//               <Card sx={{ bgcolor: "background.paper", backgroundImage: "none", border: "1px solid rgba(255,255,255,0.03)" }}>
+//                 <CardContent sx={{ p: 3 }}>
+//                   <AccountBalanceIcon sx={{ color: "secondary.main", fontSize: 40, mb: 2 }} />
+//                   <Typography variant="h6" sx={{ mb: 1 }}>SARS Compliant Core</Typography>
+//                   <Typography variant="body2" color="text.secondary">
+//                     Our engines continuously sync with updated South African Revenue Service structural regulations for flawless calculations.
+//                   </Typography>
+//                 </CardContent>
+//               </Card>
+//             </Grid>
+//             <Grid item xs={12} md={4}>
+//               <Card sx={{ bgcolor: "background.paper", backgroundImage: "none", border: "1px solid rgba(255,255,255,0.03)" }}>
+//                 <CardContent sx={{ p: 3 }}>
+//                   <AutoAwesomeIcon sx={{ color: "success.main", fontSize: 40, mb: 2 }} />
+//                   <Typography variant="h6" sx={{ mb: 1 }}>Smart Optimization</Typography>
+//                   <Typography variant="body2" color="text.secondary">
+//                     Intelligent engine sweeps maximize medical aid credits, travel logs, and retirement annuity deductions seamlessly.
+//                   </Typography>
+//                 </CardContent>
+//               </Card>
+//             </Grid>
+//           </Grid>
+//         </Box>
+//       </Container>
+
+//       {/* FOOTER */}
+//       <Box component="footer" sx={{ bgcolor: "background.paper", py: 6, borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+//         <Container maxWidth="lg">
+//           <Grid container spacing={4} justifyContent="space-between">
+//             <Grid item xs={12} md={4}>
+//               <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.main", mb: 2 }}>finTax.</Typography>
+//               <Typography variant="body2" color="text.secondary">
+//                 Autonomous tax engineering built for modern South African professionals and businesses.
+//               </Typography>
+//             </Grid>
+//             <Grid item xs={12} md={4} textAlign={{ xs: "left", md: "right" }}>
+//               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+//                 Authorized Financial Systems Provider Context
+//               </Typography>
+//               <Typography variant="caption" color="text.secondary">
+//                 &copy; 2026 finTax SA. All rights reserved. Registered POPIA Compliant Operator.
+//               </Typography>
+//             </Grid>
+//           </Grid>
+//         </Container>
+//       </Box>
+
+//     </Box>
+//   );
+// };
+
+// export default Home;

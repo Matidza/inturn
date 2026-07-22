@@ -224,7 +224,7 @@ const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, 
 // ─── Profile Settings ─────────────────────────────────────────────────────────
 
 const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }) => {
-  const { data: user }          = useGetIdentity<any>();
+  const { data: user } = useGetIdentity<any>();
   const [form, setForm] = useState<ProfileForm>({
     firstName: "",
     lastName: "",
@@ -240,7 +240,7 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
-
+  console.log(user)
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -292,8 +292,8 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
             }}
           /> */}
           <Avatar 
-            // src={user?.avatar}
-            src={avatarPreview} 
+            src={user?.avatar}
+            // src={avatarPreview} 
             sx={{ 
               width: 80, height: 80 
             }} 
@@ -319,7 +319,7 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
           </Tooltip>
         </Box>
         <Box>
-          <Typography variant="body2" fontWeight={600}>Profile Photo</Typography>
+          <Typography variant="body2" fontWeight={600}>{user?.name}</Typography>
           <Typography variant="caption" color="text.secondary">JPG, PNG or GIF · Max 5MB</Typography>
         </Box>
       </Stack>
@@ -328,7 +328,7 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="First Name"
+            label={user?.given_name || "First name"}
             value={form.firstName}
             onChange={handleChange("firstName")}
             error={!!errors.firstName}
@@ -339,7 +339,7 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Last Name"
+            label={user?.family_name || "Last name"}
             value={form.lastName}
             onChange={handleChange("lastName")}
             error={!!errors.lastName}

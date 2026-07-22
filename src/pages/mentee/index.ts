@@ -14,6 +14,7 @@ import PaySession from "./pay";
 import PaymentDeclined from "./paymentdeclined";
 import PaymentSuccess from "./paymentsuccess";
 import AIInterviewHome from "./ai/aiInterviews";
+import AIInterviewDetail from "./ai/interview"
 
 export {
     Analyzer, 
@@ -31,5 +32,6 @@ export {
     PaySession,
     PaymentDeclined,
     PaymentSuccess,
-    AIInterviewHome
+    AIInterviewHome,
+    AIInterviewDetail
 }
