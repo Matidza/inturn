@@ -289,7 +289,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 const PRIMARY = "#7F42E7";
 const PRIMARY_LIGHT = "#F5F0FD";
 const MAX_PRICE = 1000;
-const ITEMS_PER_PAGE = 8; // Max profiles displayed simultaneously per view sequence
+const ITEMS_PER_PAGE = 20; // Max profiles displayed simultaneously per view sequence
 const P = "#7F42E7"; const P_DARK = "#5E2EC5"; const P_LITE = "#F0EAFD";
 const BORDER = "#E8E3F5";
 const API_URL = "http://localhost:5005/api/v1/mentee/profesionals";

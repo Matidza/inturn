@@ -1641,13 +1641,13 @@ const Home = () => {
                 direction={{ xs: "column", sm: "row" }}
                 spacing={2}
                 alignItems="center"
-              >
-                <a href="/mentee" className="btn-primary">
+              >            
+                <Typography className="btn-primary" component={Link} to="/mentee" >
                   Start practicing free <ArrowRight size={16} />
-                </a>
-                <a href="/how-it-works" className="btn-ghost">
+                </Typography>
+                <Typography className="btn-ghost" component={Link} to="/how-it-works" >
                   Watch how it works
-                </a>
+                </Typography>
               </Stack>
 
               {/* social proof chips */}
@@ -2118,11 +2118,11 @@ const Home = () => {
               Join 12,000+ students who stopped winging it.
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center">
-              <a href="/mentee" className="btn-primary">
+              
+              <Typography className="btn-primary" component={Link} to="/mentee" >
                 Get started — it's free <ArrowRight size={16} />
-              </a>
-              <a
-                href="/ai-practice"
+              </Typography>
+              <Typography component={Link} to="/ai-practice"
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
                   padding: "14px 28px", borderRadius: 100, fontSize: 15,
@@ -2133,7 +2133,7 @@ const Home = () => {
                 }}
               >
                 Try AI interview first
-              </a>
+              </Typography>            
             </Stack>
           </Container>
         </Box>

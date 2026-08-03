@@ -230,7 +230,7 @@ export const StudentPortal: React.FC = () => {
             <Grid container spacing={3}>
               {[
                 { title: "AI CV review", price: "Free", note: "unlimited" },
-                { title: "AI Mock interview", price: "R50", note: "per session" },
+                { title: "AI Mock interview", price: "R49", note: "per session" },
                 { title: "Career coaching", price: "R100 - R400", note: "per session" },
               ].map((plan, i) => (
                 <Grid item xs={12} md={4} key={i}>

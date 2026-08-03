@@ -1264,7 +1264,7 @@ import {
 ───────────────────────────────────────────────────────────── */
 const API_BASE             = "http://localhost:5005";
 const INTERVIEW_ENDPOINT   = `${API_BASE}/api/v1/mentee/practice-details`;
-console.log(INTERVIEW_ENDPOINT)
+// console.log(INTERVIEW_ENDPOINT)
 /* ─────────────────────────────────────────────────────────────
    TOKENS  — identical to aiInterviews.tsx so pages feel unified
 ───────────────────────────────────────────────────────────── */

@@ -291,29 +291,6 @@ const Header = () => {
               )}
             </Box>
             
-            {/* <Box>     
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                // src={user.avatar}
-                  sx={{ width: 30, height: 30 }}
-                />
-                  <Button onClick={handleLogout} sx={{ 
-                      textTransform: "none", 
-                      border: 1, 
-                      borderRadius: 25, 
-                      color: "#b893f6ff", 
-                      fontWeight: 600, 
-                      borderColor: "#b893f6ff", 
-                      fontSize: 13,
-                      "&:hover": {
-                        background: "#b893f6ff", color: "#FFFFFF"
-                      },
-                    }}
-                  >
-                    Logout
-                  </Button>
-              </Stack>
-            </Box> */}
 
           </Stack>
         </Toolbar>
