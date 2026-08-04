@@ -199,8 +199,7 @@ import { CredentialResponse } from "../interfaces/google";
 import { HandshakeOutlined } from "@mui/icons-material";
 import { ArrowRight, Zap, Shield, Users } from "lucide-react";
 
-const GOOGLE_CLIENT_ID =
-  "1041339102270-e1fpe2b6v6u1didfndh7jkjmpcashs4f.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "1041339102270-e1fpe2b6v6u1didfndh7jkjmpcashs4f.apps.googleusercontent.com";
 
 /* ── TOKENS ─────────────────────────────────────────────────────────────── */
 const P      = "#7F42E7";
