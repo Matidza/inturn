@@ -44,7 +44,7 @@ import {
 
 // admin pages
 import AdminDashboard from "../pages/admin/dashboard";
-import Users from "../pages/admin/Users";
+// import Users from "../pages/admin/Users";
 
 // professional pages
 // import Dashboard from "../pages/professionals/dashboard";
