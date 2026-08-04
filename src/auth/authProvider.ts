@@ -34,6 +34,17 @@
 //   },
 // };
 
+function getRedirectByRole(role: string): string {
+  switch (role) {
+    case "admin":
+      return "/admin";
+    case "professional":
+      return "/pro";
+    default:
+      return "/mentee";
+  }
+}
+
 
 interface LoginParams {
   email: string;
