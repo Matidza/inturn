@@ -175,9 +175,18 @@ function App() {
                 <Routes>
                   
                   {/* Protected */}
-                  <Route 
+                  {/* <Route 
                     element={
                       <Authenticated fallback={<CatchAllNavigate to="/login" />}>
+                        <Outlet />
+                      </Authenticated>
+                    }
+                  >
+                    <Route path="/*" element={<AppRoutes />} />
+                  </Route> */}
+                  <Route 
+                    element={
+                      <Authenticated key="authenticated-routes" fallback={<CatchAllNavigate to="/login" />}>
                         <Outlet />
                       </Authenticated>
                     }
