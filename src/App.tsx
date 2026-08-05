@@ -97,58 +97,120 @@ axiosInstance.interceptors.request.use((config) => {
 /* Auth */
 const authProvider = {
   login: async ({ credential, role }: any) => {
-  const profile = credential ? parseJwt(credential) : null;
+    const profile = credential ? parseJwt(credential) : null;
+    if ( profile ) {
+      const response = await fetch(`http://http://localhost:1000/api/v1/auth/signup`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          avatar: profile.picture,
+          role: profile.role,
+        })
+      })
 
-  if (profile) {
-    // ✅ USE ROLE FROM UI (fallback to mentee)
-    const finalRole = role || "mentee";
+      const data = response.json();
+      if (response === 200) {
+        const finalRole = role || "mentee";
+        const user = {
+        ...profile,
+          role: finalRole,
+          avatar: profile.picture,
+          name: profile.name,
+          userid: data._id
+        };
 
-    const user = {
-      ...profile,
-      role: finalRole,
-      avatar: profile.picture,
-      name: profile.name,
-    };
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", credential);
+        return {
+        success: true,
+        redirectTo:
+          finalRole === "admin"
+            ? "/admin"
+            : finalRole === "professional"
+            ? "/pro"
+            : "/mentee",
+      };
+      } else {
+        return Promise.reject()
+        //  return { success: false, redirectTo: "/" };
+      }   
+    }
 
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", credential);
+  // if (profile) {
+  //   // ✅ USE ROLE FROM UI (fallback to mentee)
+  //   const finalRole = role || "mentee";
 
-    return {
-      success: true,
-      redirectTo:
-        finalRole === "admin"
-          ? "/admin"
-          : finalRole === "professional"
-          ? "/pro"
-          : "/mentee",
-    };
-  }
+  //   const user = {
+  //     ...profile,
+  //     role: finalRole,
+  //     avatar: profile.picture,
+  //     name: profile.name,
+  //     userid: data._id
+  //   };
 
-  return { success: false, redirectTo: "/" };
+  //   localStorage.setItem("user", JSON.stringify(user));
+  //   localStorage.setItem("token", credential);
+
+  //   return {
+  //     success: true,
+  //     redirectTo:
+  //       finalRole === "admin"
+  //         ? "/admin"
+  //         : finalRole === "professional"
+  //         ? "/pro"
+  //         : "/mentee",
+  //   };
+  // }
+
+  // return { success: false, redirectTo: "/" };
+  localStorage.setItem("token", credential);
+  return Promise.resolve()
 },
 
-  logout: async () => {
-    localStorage.clear();
-    return { success: true, redirectTo: "/login" };
+logout: () => {
+  const token = localStorage.getItem('token');
+  if (token && typeof window !== "undefined") {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    axios.defaults.headers.common = {};
+    window.google?.account.id.revoke(token, () => {
+      return { success: true, redirectTo: "/login" };
+    });
+  }
+  return Promise.resolve();
+},
+checkError: () => Promise.resolve(),
+checkAuth: async () => {
+  const token = localStorage.getItem("token");
+  return token
+  ? { authenticated: true }
+  : {
+    authenticated: false,
+    redirectTo: "/login",
+    logout: true,
+  };
+},
+
+  // logout: async () => {
+  //   localStorage.clear();
+  //   return { success: true, redirectTo: "/login" };
+  // },
+
+  // getIdentity: async () => {
+  //   return JSON.parse(localStorage.getItem("user") || "null");
+  // },
+
+  // onError: async (error: any) => ({ error }),
+
+  getPermissions: () => Promise.resolve(),
+  getUserIdentity: async () => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return Promise.resolve(JSON.parse(user));
+    }
   },
-
-  check: async () => {
-    const token = localStorage.getItem("token");
-
-    return token
-      ? { authenticated: true }
-      : {
-          authenticated: false,
-          redirectTo: "/login",
-          logout: true,
-        };
-  },
-
-  getIdentity: async () => {
-    return JSON.parse(localStorage.getItem("user") || "null");
-  },
-
-  onError: async (error: any) => ({ error }),
 };
 
 /* App */
