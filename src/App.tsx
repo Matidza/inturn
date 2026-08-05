@@ -96,91 +96,91 @@ axiosInstance.interceptors.request.use((config) => {
 
 /* Auth */
 const authProvider = {
-  login: async ({ credential, role }: any) => {
-    const profile = credential ? parseJwt(credential) : null;
-    if ( profile ) {
-      const response = await fetch(`http://http://localhost:1000/api/v1/auth/signup`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          name: profile.name,
-          email: profile.email,
-          avatar: profile.picture,
-          role: profile.role,
-        })
-      })
 
-      const data = response.json();
-      if (response === 200) {
-        const finalRole = role || "mentee";
-        const user = {
-        ...profile,
-          role: finalRole,
-          avatar: profile.picture,
-          name: profile.name,
-          userid: data._id
-        };
 
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("token", credential);
-        return {
-        success: true,
-        redirectTo:
-          finalRole === "admin"
-            ? "/admin"
-            : finalRole === "professional"
-            ? "/pro"
-            : "/mentee",
+login: async ({ credential, role }: any) => {
+  const profile = credential ? parseJwt(credential) : null;
+  if (!profile) {
+    return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
+  }
+
+  try {
+    const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: profile.name,
+        email: profile.email,
+        avatar: profile.picture,
+        role
+      }),
+    });
+    console.log({
+      name: profile.name,
+      email: profile.email,
+      avatar: profile.picture,
+      role,
+      googleRole: profile.role,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: { name: "LoginError", message: data?.message || "Could not create user" },
       };
-      } else {
-        return Promise.reject()
-        //  return { success: false, redirectTo: "/" };
-      }   
     }
 
-  // if (profile) {
-  //   // ✅ USE ROLE FROM UI (fallback to mentee)
-  //   const finalRole = role || "mentee";
+    const finalRole = role || "mentee";
+    const user = {
+      ...profile,
+      role: finalRole,
+      avatar: profile.picture,
+      name: profile.name,
+      userid: data.newUser?._id ?? data._id,
+    };
 
-  //   const user = {
-  //     ...profile,
-  //     role: finalRole,
-  //     avatar: profile.picture,
-  //     name: profile.name,
-  //     userid: data._id
-  //   };
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", credential);
 
-  //   localStorage.setItem("user", JSON.stringify(user));
-  //   localStorage.setItem("token", credential);
-
-  //   return {
-  //     success: true,
-  //     redirectTo:
-  //       finalRole === "admin"
-  //         ? "/admin"
-  //         : finalRole === "professional"
-  //         ? "/pro"
-  //         : "/mentee",
-  //   };
-  // }
-
-  // return { success: false, redirectTo: "/" };
-  localStorage.setItem("token", credential);
-  return Promise.resolve()
+    return {
+      success: true,
+      redirectTo:
+        finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
+    };
+  } catch (err: any) {
+    return { success: false, error: { name: "LoginError", message: err.message } };
+  }
 },
-
 logout: () => {
-  const token = localStorage.getItem('token');
-  if (token && typeof window !== "undefined") {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    axios.defaults.headers.common = {};
-    window.google?.account.id.revoke(token, () => {
-      return { success: true, redirectTo: "/login" };
+  const token = localStorage.getItem("token");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  axios.defaults.headers.common = {};
+
+  if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
+    window.google.accounts.id.revoke(token, () => {
+      // fire-and-forget cleanup callback from Google's SDK — don't rely on
+      // this for Refine's flow, it doesn't await or block on it
     });
   }
-  return Promise.resolve();
+
+  return Promise.resolve({ success: true, redirectTo: "/login" });
 },
+
+// logout: () => {
+//   const token = localStorage.getItem('token');
+//   if (token && typeof window !== "undefined") {
+//     localStorage.removeItem('token');
+//     localStorage.removeItem('user');
+//     axios.defaults.headers.common = {};
+//     window.google?.account.id.revoke(token, () => {
+//       return { success: true, redirectTo: "/login" };
+//     });
+//   }
+//   return Promise.resolve();
+// },
 checkError: () => Promise.resolve(),
 checkAuth: async () => {
   const token = localStorage.getItem("token");
