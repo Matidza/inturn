@@ -190,7 +190,8 @@ const NavItem = ({
 const Sider = forwardRef<HTMLDivElement, SideBarProps>(
   ({ collapsed, setCollapsed }, ref) => {
     const { mutate: logout }      = useLogout();
-    const { data: user }          = useGetIdentity<any>();
+    // const { data: user }          = useGetIdentity<any>();
+    const user = JSON.parse(localStorage.getItem("user") || "null");
     const { dark, toggle }        = useThemeMode();
     const theme                   = useTheme();
     const isMobile                = useMediaQuery(theme.breakpoints.down("md"));
@@ -347,7 +348,7 @@ const Sider = forwardRef<HTMLDivElement, SideBarProps>(
             {/* User */}
             <Box sx={{ mt:1, px:1 }}>
               <Stack direction="row" spacing={1.5} alignItems="center">
-                <Avatar src={user?.avatar} sx={{ width:34, height:34, border:`2px solid ${t.avatarBorder}` }}/>
+                <Avatar src={user?.picture} sx={{ width:34, height:34, border:`2px solid ${t.avatarBorder}` }}/>
                 <Box>
                   <Typography sx={{ fontSize:13, fontWeight:600, color:t.text }}>{user?.name || "User"}</Typography>
                   <Typography sx={{ fontSize:11.5, color:t.textSub, textTransform:"capitalize" }}>{user?.role || "Mentee"}</Typography>
@@ -472,6 +473,7 @@ const Sider = forwardRef<HTMLDivElement, SideBarProps>(
               justifyContent={collapsed ? "center" : "flex-start"}
             >
               <Tooltip title={collapsed ? (user?.name || "User") : ""} placement="right" arrow>
+                
                 <Avatar
                   src={user?.avatar}
                   sx={{
