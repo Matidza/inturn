@@ -103,10 +103,12 @@ login: async ({ credential, role }: any) => {
   if (!profile) {
     return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
   }
+  
 
   try {
     const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: profile.name,
@@ -153,20 +155,51 @@ login: async ({ credential, role }: any) => {
     return { success: false, error: { name: "LoginError", message: err.message } };
   }
 },
-logout: () => {
-  const token = localStorage.getItem("token");
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  axios.defaults.headers.common = {};
 
-  if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
-    window.google.accounts.id.revoke(token, () => {
-      // fire-and-forget cleanup callback from Google's SDK — don't rely on
-      // this for Refine's flow, it doesn't await or block on it
+// logout: () => {
+//   const token = localStorage.getItem("token");
+//   localStorage.removeItem("token");
+//   localStorage.removeItem("user");
+//   axios.defaults.headers.common = {};
+
+//   if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
+//     window.google.accounts.id.revoke(token, () => {
+//       // fire-and-forget cleanup callback from Google's SDK — don't rely on
+//       // this for Refine's flow, it doesn't await or block on it
+//     });
+//   }
+
+//   return Promise.resolve({ success: true, redirectTo: "/login" });
+// },
+
+logout: async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    await fetch("http://localhost:1000/api/v1/auth/logout", {
+      method: "POST",
+      credentials: "include", // send cookies
     });
+  } catch (error) {
+    console.error("Logout request failed:", error);
   }
 
-  return Promise.resolve({ success: true, redirectTo: "/login" });
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  delete axios.defaults.headers.common["Authorization"];
+
+  if (
+    token &&
+    typeof window !== "undefined" &&
+    window.google?.accounts?.id?.revoke
+  ) {
+    window.google.accounts.id.revoke(token, () => {});
+  }
+
+  return {
+    success: true,
+    redirectTo: "/login",
+  };
 },
 
 // logout: () => {
