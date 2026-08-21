@@ -95,57 +95,121 @@ axiosInstance.interceptors.request.use((config) => {
 const authProvider = {
 
 
-  login: async ({ credential, role }: any) => {
-    const profile = credential ? parseJwt(credential) : null;
-    if (!profile) {
-      return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
-    }
+  // login: async ({ credential, role }: any) => {
+  //   const profile = credential ? parseJwt(credential) : null;
+  //   if (!profile) {
+  //     return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
+  //   }
     
 
-    try {
-      const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: profile.name,
-          email: profile.email,
-          avatar: profile.picture,
-          // avatar: profile.avatar,
-          role
-        }),
-      });
+  //   try {
+  //     const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
+  //       method: "POST",
+  //       credentials: "include",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         name: profile.name,
+  //         email: profile.email,
+  //         avatar: profile.picture,
+  //         // avatar: profile.avatar,
+  //         role
+  //       }),
+  //     });
       
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (!response.ok) {
-        return {
-          success: false,
-          error: { name: "LoginError", message: data?.message || "Could not create user" },
-        };
-      }
+  //     if (!response.ok) {
+  //       return {
+  //         success: false,
+  //         error: { name: "LoginError", message: data?.message || "Could not create user" },
+  //       };
+  //     }
 
-      const finalRole = role || "mentee";
-      const user = {
-        ...profile,
-        role: finalRole,
-        avatar: profile.picture,
+  //     const finalRole = role || "mentee";
+  //     const user = {
+  //       ...profile,
+  //       role: finalRole,
+  //       avatar: profile.picture,
+  //       name: profile.name,
+  //       userId: data.newUser?._id ?? data._id,
+  //     };
+
+  //     localStorage.setItem("user", JSON.stringify(user));
+  //     localStorage.setItem("token", credential);
+
+  //     return {
+  //       success: true,
+  //       redirectTo:
+  //         finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
+  //     };
+  //   } catch (err: any) {
+  //     return { success: false, error: { name: "LoginError", message: err.message } };
+  //   }
+  // },
+
+  
+  login: async ({ credential, role }: any) => {
+  const profile = credential ? parseJwt(credential) : null;
+  if (!profile) {
+    return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
+  }
+
+  try {
+    const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         name: profile.name,
-        userId: data.newUser?._id ?? data._id,
-      };
+        email: profile.email,
+        avatar: profile.picture,
+        role,
+      }),
+    });
 
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", credential);
+    const data = await response.json();
 
+    if (!response.ok) {
       return {
-        success: true,
-        redirectTo:
-          finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
+        success: false,
+        error: { name: "LoginError", message: data?.message || "Could not create user" },
       };
-    } catch (err: any) {
-      return { success: false, error: { name: "LoginError", message: err.message } };
     }
-  },
+
+    // Trust the account's ACTUAL role from the backend — never the role
+    // picked on the login screen. That's what fixes the redirect bug
+    // even outside the mismatch case.
+    const actualRole = data.user?.role ?? "mentee";
+
+    const user = {
+      ...profile,
+      role: actualRole,
+      avatar: profile.picture,
+      name: profile.name,
+      userId: data.user?._id,
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", credential);
+
+    const redirectTo =
+      actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
+
+    return {
+      success: true,
+      redirectTo,
+      ...(data.roleMismatch && {
+        successNotification: {
+          message: "You already have an account",
+          description: data.message,
+        },
+      }),
+    };
+  } catch (err: any) {
+    return { success: false, error: { name: "LoginError", message: err.message } };
+  }
+},
+
     checkAuth: async () => {
     const token = localStorage.getItem("token");
     return token
