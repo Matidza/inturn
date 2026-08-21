@@ -765,8 +765,8 @@ const REDL   = "#FEF2F2";
 /* ─────────────────────────────────────────────────────────────
    CONSTANTS
 ───────────────────────────────────────────────────────────── */
-const API_URL       = "http://localhost:5005/api/v1/mentee/profesionals";
-const MAX_PRICE     = 1000;
+const API_URL       = "http://localhost:1000/api/v1/mentee/profesionals";
+const MAX_PRICE     = 300;
 const ITEMS_PER_PAGE = 8;
 
 /* ─────────────────────────────────────────────────────────────

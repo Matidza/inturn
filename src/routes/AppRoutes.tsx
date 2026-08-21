@@ -145,13 +145,13 @@ const AppRoutes = () => {
         <Route path="professionals" element={<Professionals />} />
         <Route path="ai-practice" element={<AIPractice />} />
         <Route path="ai-home" element={<AIInterviewHome />} />
-        <Route path="ai-interview/:id" element={<AIInterviewDetail />} />
         <Route path="cv-analyzer" element={<Analyzer />} />
         <Route path="interviews" element={<Interviews />} />
         <Route path="applications" element={<Applications />} />
         <Route path="settings" element={<Settingss />} />
 
         {/* NON-SIDEBAR pages */}
+        <Route path="ai-interview/:id" element={<AIInterviewDetail />} />
         <Route path="professional-details/:id" element={<ProfessionalCardDetails />}/>
         <Route path="feedback" element={<Feedback />} />
         <Route path="request-an-interview" element={<RequestSession />} />

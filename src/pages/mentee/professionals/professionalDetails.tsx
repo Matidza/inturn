@@ -573,14 +573,14 @@ import axios from "axios";
 import { Box, Typography, Stack, Grid, Skeleton, Avatar } from "@mui/material";
 import {
   ArrowLeft, Share2, CheckCircle2, Calendar, Bookmark,
-  ChevronRight, Star, Clock, Users, Briefcase, MapPin,
+  ChevronRight, Star, Clock, Users, Briefcase,
   RefreshCw, AlertCircle, Globe, Zap, BookOpen,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────
    API  — unchanged from professionalDetails
 ───────────────────────────────────────────────────────────── */
-const API_BASE              = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5005";
+const API_BASE              = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:1000";
 const PROFESSIONAL_ENDPOINT = `${API_BASE}/api/v1/mentee/professional-details`;
 
 /* ─────────────────────────────────────────────────────────────

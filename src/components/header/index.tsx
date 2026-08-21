@@ -72,7 +72,10 @@ const Header = () => {
           
           {/* ================= LOGO ================= */}
           <Stack direction="row" spacing={1} alignItems="center">
-            <HandshakeOutlined sx={{ fontSize: 27, color: "#05050B" }} />
+            {/* <HandshakeOutlined sx={{ fontSize: 27, color: "#05050B" }} /> */}
+            <Box sx={{ width:32, height:32, borderRadius:"9px", background:"#", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <HandshakeOutlined sx={{ fontSize:27, color:"#7F42E7" }}/>
+              </Box>
             <Typography
               component={Link}
               to="/"

@@ -15,7 +15,8 @@ import { useThemeMode } from "../../components/common/themecontext";
 
 /* ── API BASE ─────────────────────────────────────────────── */
 // Adjust this to your actual backend URL / env var
-const API_BASE = "http://localhost:5005/api/v1";
+const API_BASE = "http://localhost:1000/api/v1";
+// const API_BASE =  http://localhost:1000/api/v1/mentee
 
 /* ── CONSTANTS ───────────────────────────────────────────── */
 const PURPLE  = "#7F42E7";

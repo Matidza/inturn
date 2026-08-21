@@ -12,7 +12,7 @@ import {
 /* ─────────────────────────────────────────────────────────────
    API  — unchanged from professionalDetails
 ───────────────────────────────────────────────────────────── */
-const API_BASE              = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5005";
+const API_BASE              = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:1000";
 const PROFESSIONAL_ENDPOINT = `${API_BASE}/api/v1/mentee/professional-details`;
 
 /* ─────────────────────────────────────────────────────────────

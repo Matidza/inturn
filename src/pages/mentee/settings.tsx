@@ -117,7 +117,7 @@ function useFeedback() {
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabValue>("profile");
   const { snackbar, show, hide } = useFeedback();
-  const { data: user }          = useGetIdentity<any>();
+  const user =  JSON.parse(localStorage.getItem("user") || "null");
 
   return (
     <Box sx={{ px: { xs: 2, md: 3 }, py: 4, backgroundColor: "#FFFFFF", color: "#05050B", }}>
@@ -224,7 +224,7 @@ const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, 
 // ─── Profile Settings ─────────────────────────────────────────────────────────
 
 const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }) => {
-  const { data: user } = useGetIdentity<any>();
+  const user = JSON.parse(localStorage.getItem("user") || "null");
   const [form, setForm] = useState<ProfileForm>({
     firstName: "",
     lastName: "",
@@ -240,7 +240,6 @@ const ProfileSettings: React.FC<{ onSave: (msg: string) => void }> = ({ onSave }
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
-  console.log(user)
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;

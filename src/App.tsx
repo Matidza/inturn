@@ -78,9 +78,6 @@ import AppRoutes from "./routes/AppRoutes";
 import { parseJwt } from "./utils/parse-jwt";
 import { dataProvider } from "./providers/data";
 import PublicLayout from "./layouts/PublicLayout";
-import { ColorModeContextProvider } from "./contexts/color-mode";
-
-
 
 
 /* Axios */
@@ -98,153 +95,96 @@ axiosInstance.interceptors.request.use((config) => {
 const authProvider = {
 
 
-login: async ({ credential, role }: any) => {
-  const profile = credential ? parseJwt(credential) : null;
-  if (!profile) {
-    return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
-  }
-  
-
-  try {
-    const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: profile.name,
-        email: profile.email,
-        avatar: profile.picture,
-        role
-      }),
-    });
-    console.log({
-      name: profile.name,
-      email: profile.email,
-      avatar: profile.picture,
-      role,
-      googleRole: profile.role,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: { name: "LoginError", message: data?.message || "Could not create user" },
-      };
+  login: async ({ credential, role }: any) => {
+    const profile = credential ? parseJwt(credential) : null;
+    if (!profile) {
+      return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
     }
+    
 
-    const finalRole = role || "mentee";
-    const user = {
-      ...profile,
-      role: finalRole,
-      avatar: profile.picture,
-      name: profile.name,
-      userid: data.newUser?._id ?? data._id,
+    try {
+      const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          avatar: profile.picture,
+          // avatar: profile.avatar,
+          role
+        }),
+      });
+      
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: { name: "LoginError", message: data?.message || "Could not create user" },
+        };
+      }
+
+      const finalRole = role || "mentee";
+      const user = {
+        ...profile,
+        role: finalRole,
+        avatar: profile.picture,
+        name: profile.name,
+        userId: data.newUser?._id ?? data._id,
+      };
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", credential);
+
+      return {
+        success: true,
+        redirectTo:
+          finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
+      };
+    } catch (err: any) {
+      return { success: false, error: { name: "LoginError", message: err.message } };
+    }
+  },
+    checkAuth: async () => {
+    const token = localStorage.getItem("token");
+    return token
+    ? { authenticated: true }
+    : {
+      authenticated: false,
+      redirectTo: "/login",
+      logout: true,
     };
+  },
+    checkError: () => Promise.resolve(),
 
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", credential);
-
-    return {
-      success: true,
-      redirectTo:
-        finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
-    };
-  } catch (err: any) {
-    return { success: false, error: { name: "LoginError", message: err.message } };
-  }
-},
-
-logout: () => {
-  const token = localStorage.getItem("token");
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  axios.defaults.headers.common = {};
-
-  if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
-    window.google.accounts.id.revoke(token, () => {
-      // fire-and-forget cleanup callback from Google's SDK — don't rely on
-      // this for Refine's flow, it doesn't await or block on it
-    });
-  }
-
-  return Promise.resolve({ success: true, redirectTo: "/login" });
-},
-
-// logout: async () => {
-//   const token = localStorage.getItem("token");
-
-//   try {
-//     await fetch("http://localhost:1000/api/v1/auth/logout", {
-//       method: "POST",
-//       credentials: "include", // send cookies
-//     });
-//   } catch (error) {
-//     console.error("Logout request failed:", error);
-//   }
-
-//   localStorage.removeItem("token");
-//   localStorage.removeItem("user");
-//   delete axios.defaults.headers.common["Authorization"];
-
-//   if (
-//     token &&
-//     typeof window !== "undefined" &&
-//     window.google?.accounts?.id?.revoke
-//   ) {
-//     window.google.accounts.id.revoke(token, () => {});
-//   }
-
-//   return {
-//     success: true,
-//     redirectTo: "/login",
-//   };
-// },
-
-// logout: () => {
-//   const token = localStorage.getItem('token');
-//   if (token && typeof window !== "undefined") {
-//     localStorage.removeItem('token');
-//     localStorage.removeItem('user');
-//     axios.defaults.headers.common = {};
-//     window.google?.account.id.revoke(token, () => {
-//       return { success: true, redirectTo: "/login" };
-//     });
-//   }
-//   return Promise.resolve();
-// },
-checkError: () => Promise.resolve(),
-checkAuth: async () => {
-  const token = localStorage.getItem("token");
-  return token
-  ? { authenticated: true }
-  : {
-    authenticated: false,
-    redirectTo: "/login",
-    logout: true,
-  };
-},
-
-  // logout: async () => {
-  //   localStorage.clear();
-  //   return { success: true, redirectTo: "/login" };
-  // },
-
-  // getIdentity: async () => {
-  //   return JSON.parse(localStorage.getItem("user") || "null");
-  // },
-
-  // onError: async (error: any) => ({ error }),
 
   getPermissions: () => Promise.resolve(),
-  getUserIdentity: async () => {
+ useGetIdentity: async () => {
     const user = localStorage.getItem('user');
     if (user) {
       return JSON.parse(user);
     }
     console.log(user)
   },
+
+  logout: () => {
+    const token = localStorage.getItem("token");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    axios.defaults.headers.common = {};
+
+    if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
+      window.google.accounts.id.revoke(token, () => {
+        // fire-and-forget cleanup callback from Google's SDK — don't rely on
+        // this for Refine's flow, it doesn't await or block on it
+      });
+    }
+
+    return Promise.resolve({ success: true, redirectTo: "/login" });
+  },
+
+
 };
 
 /* App */

@@ -157,6 +157,7 @@ const Header = () => {
           <Stack direction="row" spacing={4} alignItems="center"   sx={{ display: { xs: "none", md: "flex", } }}>
             <Stack direction="row" spacing={1} alignItems="center">
                {/* background: "linear-gradient(90deg, #b893f6ff, #7f42e7ff)", */}
+               
               < HandshakeOutlined sx={{ fontSize: 27, color: "#05050B", fontWeight: 600 }} />
               <Typography component={Link} to="/"  sx={{ fontFamily: "", fontWeight: 700, fontSize: "1.7rem", color: "#05050B", textDecoration: "none" }}>
                 inTURN

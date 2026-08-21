@@ -190,8 +190,9 @@ const NavItem = ({
 const Sider = forwardRef<HTMLDivElement, SideBarProps>(
   ({ collapsed, setCollapsed }, ref) => {
     const { mutate: logout }      = useLogout();
-    // const { data: user }          = useGetIdentity<any>();
     const user = JSON.parse(localStorage.getItem("user") || "null");
+    console.log(user)
+
     const { dark, toggle }        = useThemeMode();
     const theme                   = useTheme();
     const isMobile                = useMediaQuery(theme.breakpoints.down("md"));
@@ -227,14 +228,14 @@ const Sider = forwardRef<HTMLDivElement, SideBarProps>(
           >
             {/* Logo */}
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box sx={{ width:32, height:32, borderRadius:"9px", background:"#7F42E7", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <HandshakeOutlined sx={{ fontSize:18, color:"#fff" }}/>
+              <Box sx={{ width:32, height:32, borderRadius:"9px", background:"#", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <HandshakeOutlined sx={{ fontSize:27, color:"#7F42E7" }}/>
               </Box>
               <Typography
                 component={Link} to="/mentee"
                 sx={{ fontWeight:800, fontSize:"1.2rem", color:t.text, textDecoration:"none", letterSpacing:"-0.01em", fontFamily:"'DM Sans',sans-serif" }}
               >
-                Ndima
+                inTurn
               </Typography>
             </Stack>
 
