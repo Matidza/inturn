@@ -17,11 +17,12 @@ const API_BASE = "http://localhost:1000/api/v1"
 // on the list endpoint instead of two separate community/mine endpoints).
 const INTERVIEWS_ENDPOINT = "/mentee/interviews";
 
-// (import.meta as any).env?.VITE_API_URL ?? "/api";
+
 const authFetch = async (path: string, opts: RequestInit = {}) => {
-  const token = localStorage.getItem("authToken") ?? "";
+  const token = localStorage.getItem("token") ?? "";
   const res = await fetch(`${API_BASE}${path}`, {
     ...opts,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -29,7 +30,6 @@ const authFetch = async (path: string, opts: RequestInit = {}) => {
     },
   });
   const data = await res.json();
-  console.log(data)
   if (!res.ok || !data.success) throw new Error(data.message ?? `Request failed ${res.status}`);
   return data;
 };

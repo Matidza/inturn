@@ -29,6 +29,7 @@ import routerProvider, {
 } from "@refinedev/react-router";
 
 import axios from "axios";
+import { useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -77,6 +78,12 @@ import ProfessionalCardDetails from "./pages/professionalDetails";
 import HMM4750 from "./pages/4750";
 import AppRoutes from "./routes/AppRoutes";
 import { parseJwt } from "./utils/parse-jwt";
+import {
+  refreshAccessToken,
+  scheduleTokenRefresh,
+  clearScheduledRefresh,
+  markTokenIssued,
+} from "./utils/tokenRefresh";
 import { dataProvider } from "./providers/data";
 import PublicLayout from "./layouts/PublicLayout";
 
@@ -92,10 +99,10 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// Silent token refresh: catch a 401 from any request on this instance,
-// try to mint a fresh accessToken via the httpOnly refreshToken cookie,
-// and retry the original request once. Only covers requests made through
-// axiosInstance / dataProvider — NOT any component still using raw fetch().
+// Reactive safety net: catches a 401 (e.g. clock drift, a backgrounded
+// tab whose timer didn't fire) and refreshes on demand. Shares the same
+// deduped refreshAccessToken() as the proactive 14-min timer, so the two
+// never race each other into firing separate refresh calls.
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -108,18 +115,14 @@ axiosInstance.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      try {
-        await axios.post(
-          "http://localhost:1000/api/v1/refresh-token",
-          {},
-          { withCredentials: true }
-        );
+      const ok = await refreshAccessToken();
+      if (ok) {
         return axiosInstance(originalRequest);
-      } catch (refreshError) {
+      } else {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "/login";
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       }
     }
 
@@ -172,9 +175,16 @@ const authProvider: AuthProvider = {
 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", credential);
+      markTokenIssued();
 
       const redirectTo =
         actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
+
+      scheduleTokenRefresh(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      });
 
       return {
         success: true,
@@ -211,9 +221,11 @@ const authProvider: AuthProvider = {
   },
 
   logout: async () => {
+    clearScheduledRefresh();
     const token = localStorage.getItem("token");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("tokenIssuedAt");
     axios.defaults.headers.common = {};
 
     if (token && typeof window !== "undefined" && window.google?.accounts?.id?.revoke) {
@@ -229,6 +241,19 @@ const authProvider: AuthProvider = {
 
 /* App */
 function App() {
+  // Re-arm the proactive refresh timer on a hard page reload, if a
+  // session already exists — accounts for elapsed time since login so
+  // it doesn't reset the 14-min countdown on every refresh.
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      scheduleTokenRefresh(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      });
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
