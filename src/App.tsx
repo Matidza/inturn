@@ -1,6 +1,7 @@
 import {
   Authenticated,
   Refine,
+  type AuthProvider,
 } from "@refinedev/core";
 
 import {
@@ -36,10 +37,10 @@ import {
 } from "react-router-dom";
 
 // Public Routs
-import { 
-  Applications, 
-  Features, 
-  Login, 
+import {
+  Applications,
+  Features,
+  Login,
   Home,
   CookieSettings,
   PrivacyPolicy,
@@ -48,7 +49,7 @@ import {
 } from "./pages";
 
 
-import { 
+import {
   AboutUs,
   Blog,
   CompanyPortal,
@@ -60,7 +61,7 @@ import {
   Support
 } from "./pages/footer";
 
-import { 
+import {
   CompanyDashboard,
   FindAnswers,
   InterviewCVTip,
@@ -91,148 +92,125 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-/* Auth */
-const authProvider = {
+// Silent token refresh: catch a 401 from any request on this instance,
+// try to mint a fresh accessToken via the httpOnly refreshToken cookie,
+// and retry the original request once. Only covers requests made through
+// axiosInstance / dataProvider — NOT any component still using raw fetch().
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/refresh-token")
+    ) {
+      originalRequest._retry = true;
 
-  // login: async ({ credential, role }: any) => {
-  //   const profile = credential ? parseJwt(credential) : null;
-  //   if (!profile) {
-  //     return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
-  //   }
-    
-
-  //   try {
-  //     const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
-  //       method: "POST",
-  //       credentials: "include",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         name: profile.name,
-  //         email: profile.email,
-  //         avatar: profile.picture,
-  //         // avatar: profile.avatar,
-  //         role
-  //       }),
-  //     });
-      
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       return {
-  //         success: false,
-  //         error: { name: "LoginError", message: data?.message || "Could not create user" },
-  //       };
-  //     }
-
-  //     const finalRole = role || "mentee";
-  //     const user = {
-  //       ...profile,
-  //       role: finalRole,
-  //       avatar: profile.picture,
-  //       name: profile.name,
-  //       userId: data.newUser?._id ?? data._id,
-  //     };
-
-  //     localStorage.setItem("user", JSON.stringify(user));
-  //     localStorage.setItem("token", credential);
-
-  //     return {
-  //       success: true,
-  //       redirectTo:
-  //         finalRole === "admin" ? "/admin" : finalRole === "professional" ? "/pro" : "/mentee",
-  //     };
-  //   } catch (err: any) {
-  //     return { success: false, error: { name: "LoginError", message: err.message } };
-  //   }
-  // },
-
-  
-  login: async ({ credential, role }: any) => {
-  const profile = credential ? parseJwt(credential) : null;
-  if (!profile) {
-    return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
-  }
-
-  try {
-    const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: profile.name,
-        email: profile.email,
-        avatar: profile.picture,
-        role,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: { name: "LoginError", message: data?.message || "Could not create user" },
-      };
+      try {
+        await axios.post(
+          "http://localhost:1000/api/v1/refresh-token",
+          {},
+          { withCredentials: true }
+        );
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
 
-    // Trust the account's ACTUAL role from the backend — never the role
-    // picked on the login screen. That's what fixes the redirect bug
-    // even outside the mismatch case.
-    const actualRole = data.user?.role ?? "mentee";
-
-    const user = {
-      ...profile,
-      role: actualRole,
-      avatar: profile.picture,
-      name: profile.name,
-      userId: data.user?._id,
-    };
-
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", credential);
-
-    const redirectTo =
-      actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
-
-    return {
-      success: true,
-      redirectTo,
-      ...(data.roleMismatch && {
-        successNotification: {
-          message: "You already have an account",
-          description: data.message,
-        },
-      }),
-    };
-  } catch (err: any) {
-    return { success: false, error: { name: "LoginError", message: err.message } };
+    return Promise.reject(error);
   }
-},
+);
 
-    checkAuth: async () => {
+/* Auth */
+const authProvider: AuthProvider = {
+  login: async ({ credential, role }: any) => {
+    const profile = credential ? parseJwt(credential) : null;
+    if (!profile) {
+      return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
+    }
+
+    try {
+      const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          avatar: profile.picture,
+          role,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: { name: "LoginError", message: data?.message || "Could not create user" },
+        };
+      }
+
+      // Trust the account's ACTUAL role from the backend — never the role
+      // picked on the login screen. That's what fixes the redirect bug
+      // even outside the mismatch case.
+      const actualRole = data.user?.role ?? "mentee";
+
+      const user = {
+        ...profile,
+        role: actualRole,
+        avatar: profile.picture,
+        name: profile.name,
+        userId: data.user?._id,
+      };
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", credential);
+
+      const redirectTo =
+        actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
+
+      return {
+        success: true,
+        redirectTo,
+        ...(data.roleMismatch && {
+          successNotification: {
+            message: "You already have an account",
+            description: data.message,
+          },
+        }),
+      };
+    } catch (err: any) {
+      return { success: false, error: { name: "LoginError", message: err.message } };
+    }
+  },
+
+  check: async () => {
     const token = localStorage.getItem("token");
     return token
-    ? { authenticated: true }
-    : {
-      authenticated: false,
-      redirectTo: "/login",
-      logout: true,
-    };
-  },
-    checkError: () => Promise.resolve(),
-
-
-  getPermissions: () => Promise.resolve(),
- useGetIdentity: async () => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      return JSON.parse(user);
-    }
-    console.log(user)
+      ? { authenticated: true }
+      : { authenticated: false, redirectTo: "/login", logout: true };
   },
 
-  logout: () => {
+  onError: async (error) => {
+    console.error(error);
+    return { error };
+  },
+
+  getPermissions: async () => null,
+
+  getIdentity: async () => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  },
+
+  logout: async () => {
     const token = localStorage.getItem("token");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -245,10 +223,8 @@ const authProvider = {
       });
     }
 
-    return Promise.resolve({ success: true, redirectTo: "/login" });
+    return { success: true, redirectTo: "/login" };
   },
-
-
 };
 
 /* App */
@@ -273,18 +249,9 @@ function App() {
                 }}
               >
                 <Routes>
-                  
+
                   {/* Protected */}
-                  {/* <Route 
-                    element={
-                      <Authenticated fallback={<CatchAllNavigate to="/login" />}>
-                        <Outlet />
-                      </Authenticated>
-                    }
-                  >
-                    <Route path="/*" element={<AppRoutes />} />
-                  </Route> */}
-                  <Route 
+                  <Route
                     element={
                       <Authenticated key="authenticated-routes" fallback={<CatchAllNavigate to="/login" />}>
                         <Outlet />
@@ -296,7 +263,7 @@ function App() {
 
                   {/* Public */}
                   <Route element={<PublicLayout />}>
-                    
+
                     {/* Header Links */}
                     <Route path="/" element={<Home />}/>
                     <Route path="/login" element={<Login />} />
@@ -324,14 +291,14 @@ function App() {
                     <Route path="/support" element={<Support />}/>
                     <Route path="/about-us" element={<AboutUs />}/>
                     <Route path="/contact-us" element={<ContactUs />}/>
-                    
+
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />}/>
                     <Route path="/terms-of-service" element={<TermsOfService />}/>
                     <Route path="/250904/0324/4750" element={<HMM4750 />}/>
                     <Route path="/cookie-settings" element={<CookieSettings />}/>
                   </Route>
-                 
+
                   {/* Fallback */}
                   <Route path="*" element={<ErrorComponent />} />
                 </Routes>
