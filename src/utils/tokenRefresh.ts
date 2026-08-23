@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const REFRESH_URL = "http://localhost:1000/api/v1/refresh-token";
+// const REFRESH_URL = "http://localhost:1000/api/v1/refresh-token";
+const REFRESH_URL = "http://localhost:1000/api/v1/refresh-token/get-new-access-token";
 
 // Must match the backend's actual expiresIn on the access token
 // (generateAccessToken / refreshTokenHandler both use "15m").
