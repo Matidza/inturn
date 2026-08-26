@@ -25,22 +25,12 @@ import {
   AIInterviewHome,
   AIInterviewDetail
 } from "../pages/mentee";
+import AIInterviewBrowse from "../pages/mentee/ai/AIInterviewBrowse";
+import AIInterviewCreate from "../pages/mentee/ai/AIInterviewCreate";
 
 
 
-import {
-  AIPracticeInfo,
-  CVAnalyzerInfo,
-  HowItWorks,
-  Tip,
-  ProfessionalPortal,
-  Pricing,
-  Blog,
-  Support,
-  AboutUs,
-  ContactUs,
-  
-} from "../pages/mentee/footerpages";
+
 
 // admin pages
 import AdminDashboard from "../pages/admin/dashboard";
@@ -63,11 +53,7 @@ import {
     Bookings,
 } from "../pages/professionals/index"
 
-import {
-  PrivacyPolicy,
-  TermsOfService,
-  CookieSettings,
-} from "../pages";
+
 
 const AppRoutes = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -144,13 +130,15 @@ const AppRoutes = () => {
         {/* Side Bar Links */}
         <Route path="professionals" element={<Professionals />} />
         <Route path="ai-practice" element={<AIPractice />} />
-        <Route path="ai-home" element={<AIInterviewHome />} />
+        <Route path="ai-home" element={<AIInterviewBrowse />} />
         <Route path="cv-analyzer" element={<Analyzer />} />
         <Route path="interviews" element={<Interviews />} />
         <Route path="applications" element={<Applications />} />
         <Route path="settings" element={<Settingss />} />
 
         {/* NON-SIDEBAR pages */}
+        {/* <Route path="/ai-home" element={<AIInterviewBrowse />} /> */}
+        {/* <Route path="/ai-interview/new" element={<AIInterviewCreate />} /> */}
         <Route path="ai-interview/:id" element={<AIInterviewDetail />} />
         <Route path="professional-details/:id" element={<ProfessionalCardDetails />}/>
         <Route path="feedback" element={<Feedback />} />
