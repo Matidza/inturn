@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, Stack, Grid } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   Cookie, BarChart2, Heart, Megaphone, Shield,

@@ -29,14 +29,7 @@ const NewService = () => {
   });
 
   const [newTag, setNewTag] = useState("");
-  const [newSkill, setNewSkill] = useState("");
-  const [newAvailability, setNewAvailability] = useState("");
-  const [newExperience, setNewExperience] = useState({
-    role: "",
-    company: "",
-    duration: "",
-    companyLogo: "",
-  });
+
 
   const tagColors = [
   "bg-purple-100 text-purple-800",

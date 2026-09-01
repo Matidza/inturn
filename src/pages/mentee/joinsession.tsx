@@ -825,10 +825,9 @@ import {
   Mic, MicOff, Video, VideoOff, PhoneOff, Monitor,
   MessageSquare, FileText, Users, CheckCircle2, Clock,
   Maximize2, Minimize2, Settings, Send, Wifi, X,
-  ChevronDown, ChevronUp, ChevronLeft,
 } from "lucide-react";
 import showli from "../../assets/showli.jpeg"
-import { useLogout, useGetIdentity } from "@refinedev/core";
+// import { useGetIdentity } from "@refinedev/core";
 
 
 /* ─── TOKENS ─────────────────────────────────────────────── */
@@ -1116,7 +1115,7 @@ interface IToast { id:number; msg:string; icon?:React.ReactNode }
 const JoinSession: React.FC = () => {
   const navigate  = useNavigate();
   const elapsed   = useTimer();
-  const { data: user } = useGetIdentity<any>();
+  // const { data: user } = useGetIdentity<any>();
 
   /* controls */
   const [micOn,  setMicOn]  = useState(true);

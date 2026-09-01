@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Stack, Collapse } from "@mui/material";
-import { Search, Headphones, CreditCard, Calendar, Wrench, ChevronDown, ChevronUp, ArrowRight, MessageSquare } from "lucide-react";
+import { Box, Typography, Grid, Stack } from "@mui/material";
+import { ArrowRight } from "lucide-react";
 
-const P = "#7F42E7"; const P_DARK = "#5E2EC5"; const P_LITE = "#F0EAFD";
-const INK = "#0D0D12"; const INK2 = "#5C5C72"; const BORDER = "#E8E3F5"; const OFF = "#F7F6FC";
+const P = "#7F42E7"; 
+const P_DARK = "#5E2EC5"; 
+const P_LITE = "#F0EAFD";
+const INK = "#0D0D12"; 
+const INK2 = "#5C5C72"; 
+const BORDER = "#E8E3F5"; 
+const OFF = "#F7F6FC";
 
 const sharedCss = `
 
@@ -21,41 +26,9 @@ const sharedCss = `
   .input-field::placeholder{color:${INK2};opacity:.6}
 `;
 
-const SUPPORT_CATS = [
-  { icon:<Headphones size={18}/>, title:"Account issues",      desc:"Login problems, password reset, account settings" },
-  { icon:<CreditCard size={18}/>, title:"Payments & billing",  desc:"Subscriptions, refunds, and payment methods" },
-  { icon:<Calendar size={18}/>,   title:"Session management",  desc:"Booking, cancellations, and rescheduling" },
-  { icon:<Wrench size={18}/>,     title:"Technical support",   desc:"Bugs, errors, or platform issues" },
-];
-
-const FAQS = [
-  { q:"How do I book a session?",         a:"Browse professionals, select a session type, choose a time slot, confirm your booking, and pay. The professional then approves and you receive a confirmation." },
-  { q:"How do payments work?",            a:"Payment is charged only after a professional approves your session request. You'll receive a secure payment link via email. We accept all major cards." },
-  { q:"Can I cancel or reschedule?",      a:"Yes — sessions can be cancelled or rescheduled more than 24 hours before the start time. Within 24 hours, standard cancellation terms apply." },
-  { q:"How do I become a mentor?",        a:"Sign up as a professional, complete your profile with your experience and specialty, set your availability and rates, and you're live. Students can find and book you immediately." },
-  { q:"Is my payment information safe?",  a:"Yes. We use industry-standard encryption and work with PCI-compliant payment processors. We never store your full card details." },
-  { q:"How does the AI interview work?",  a:"Our AI asks you real interview questions for your target role, listens to your responses via text or voice, scores each answer, and delivers detailed feedback instantly." },
-];
-
-const FaqItem = ({ q, a }: { q:string; a:string }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <Box sx={{ border:`1.5px solid ${open?P:BORDER}`, borderRadius:"14px", background:"#fff", overflow:"hidden", transition:"border-color .15s", mb:1.25 }}>
-      <Box onClick={() => setOpen(o=>!o)} sx={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", p:2.5, cursor:"pointer", gap:2 }}>
-        <Typography sx={{ fontFamily:"'DM Sans',sans-serif", fontWeight:600, fontSize:14.5, color:INK, lineHeight:1.4 }}>{q}</Typography>
-        <Box sx={{ color:open?P:INK2, flexShrink:0, mt:.2 }}>{open?<ChevronUp size={16}/>:<ChevronDown size={16}/>}</Box>
-      </Box>
-      <Collapse in={open}>
-        <Box sx={{ px:2.5, pb:2.5 }}>
-          <Typography sx={{ fontSize:14, color:INK2, lineHeight:1.75 }}>{a}</Typography>
-        </Box>
-      </Collapse>
-    </Box>
-  );
-};
 
 
-import { Search as SearchIcon, Clock as ClockIcon, Tag } from "lucide-react";
+import { Search as SearchIcon, Clock as ClockIcon } from "lucide-react";
 
 const POSTS = [
   { title:"How to Land Your First Internship in South Africa", category:"Career Tips", date:"10 Apr 2026", readTime:"5 min", excerpt:"A step-by-step guide to help students and graduates secure internships in top SA companies.", image:"https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80", featured:true },

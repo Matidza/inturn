@@ -64,7 +64,7 @@ export const ProfessionalPortal: React.FC = () => {
         {/* background: `linear-gradient(160deg, ${P_LIGHT} 0%, #fff 55%)`, */}
         {/* background: INK, */}
         <Box sx={{ background: `linear-gradient(160deg, ${P_LIGHT} 0%, #fff 55%)`, pt: { xs: 10, md: 16 }, pb: { xs: 10, md: 14 }, px: { xs: 3, md: 8 }, textAlign: "center", position: "relative", overflow: "hidden" }}>
-          <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 500, height: 500, borderRadius: "50%", background: `radial-gradient(circle, ${P}30 0%, transparent 70%)`, pointerEvents: "none" }} />
+          {/* <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 500, height: 500, borderRadius: "50%", background: `radial-gradient(circle, ${P}30 0%, transparent 70%)`, pointerEvents: "none" }} /> */}
           <Box sx={{ position: "relative", zIndex: 1 }}>
             <Typography sx={{ fontSize: 11.5, fontWeight: 600, color: P, textTransform: "uppercase", letterSpacing: "0.1em", mb: 2 }}>For professionals</Typography>
             {/* sx={{ fontFamily: "'Syne', sans-serif", fontSize: { xs: "2.2rem", md: "3.5rem" }, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", lineHeight: 1.05, mb: 2 }} */}

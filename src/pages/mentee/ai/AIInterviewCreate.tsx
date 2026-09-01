@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authFetch, INTERVIEWS_PATH, CATEGORIES, ivxTheme } from "./aiInterviewShared";
+import { authFetch, CREATE_INTERVIEWS_PATH, CATEGORIES, ivxTheme } from "./aiInterviewShared";
 
 type FormState = {
   title: string; description: string; category: string; difficulty: string;
@@ -32,7 +32,7 @@ const AIInterviewCreate: React.FC = () => {
     setSubmitting(true);
     setError(null);
     try {
-      const data = await authFetch(INTERVIEWS_PATH, {
+      const data = await authFetch(CREATE_INTERVIEWS_PATH, {
         method: "POST",
         body: JSON.stringify({
           title: form.title.trim(),

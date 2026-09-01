@@ -1,15 +1,14 @@
 import React from "react";
-import { Box, Typography, Grid, Card, CardContent, Stack, Rating } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Stack, } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Briefcase, DollarSign, Clock, Users, ArrowRight, TrendingUp, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 
 const P = "#7F42E7";
-const P_DARK = "#5E2EC5";
 const P_LIGHT = "#F0EAFD";
 const INK = "#0D0D12";
 const INK2 = "#4A4A5A";
 const BORDER = "#E8E3F5";
-const OFF = "#FAFAFA";
+
 
 const styles = `
 
@@ -35,98 +34,6 @@ const PBtn = ({ children, to, dark }: { children: React.ReactNode; to: string; d
   </Link>
 );
 
-const pricingTiers = [
-  {
-    title: "Starter",
-    price: "R 49 / interview",
-    features: [
-      "Basic AI mock interview (limited sessions)",
-      "Unlimited CV scan with basic feedback",
-      "Access to public job listings",
-      "Priority access to professionals",
-    ],
-  },
-  {
-    title: "Pro",
-    price: "R149 / month",
-    features: [
-      "Unlimited AI interview simulations",
-      "Advanced CV + ATS optimization insights",
-      "Personalized improvement roadmap",
-      "Priority access to professionals",
-    ],
-  },
-  {
-    title: "Pay-Per-Session",
-    price: "R100 – R400",
-    features: [
-      "Live mock interviews with real professionals",
-      "Industry-specific feedback",
-      "Performance scoring + improvement plan",
-      "Pricing varies per professional",
-    ],
-  },
-];
-
-// const Pricing = () => {
-//   return (
-//     <Box sx={{ px: { xs: 2, md: 6 }, py: 6, background: "#FFFFFF" }}>
-//       <Typography variant="h4" fontWeight={700} mb={2} color="#05050B">
-//         Pricing that grows with you
-//       </Typography>
-
-//       <Typography mb={6} maxWidth={600}  color="#05050B">
-//         Start free, improve with AI, and level up with real professionals when you're ready.
-//       </Typography>
-
-//       <Grid container spacing={4}>
-//         {pricingTiers.map((tier, index) => (
-//           <Grid item xs={12} md={4} key={index}>
-//             <Card sx={{ borderRadius: 4, height: "100%", border: "1px solid #c8c8c8ff", background: "#FFFFFF",  }}>
-//               <CardContent>
-//                 <Typography variant="h6" fontWeight={600} mb={1} color="#b893f6ff">
-//                   {tier.title}
-//                 </Typography>
-
-//                 <Typography variant="h4" fontWeight={700} mb={2} color="#05050B">
-//                   {tier.price}
-//                 </Typography>
-
-//                 {tier.features.map((feature, i) => (
-//                   <Typography key={i} sx={{ mb: 1 }} color="#4a4a4aff">
-//                     • {feature}
-//                   </Typography>
-//                 ))}
-//                 <Box>
-//                   <Button variant="contained"   sx={{ 
-//                     mt: 5,
-//                     mb: 5,
-//                     color: "#FFFFFF",
-//                     borderRadius: 5,
-//                     textTransform: "none",
-//                     fontWeight: 600,
-//                     background: "#7f42e7ff",
-//                     "&:hover": {
-//                       background: "#b187faff", color: "#FFFFFF"
-//                     },
-                    
-//                     px: { xs: 2, md: 10 },
-//                     maxWidth: 600
-//                   }}
-//                 >
-//                 Get Started
-//               </Button>          
-//                 </Box>
-                     
-//               </CardContent>
-              
-//             </Card>
-//           </Grid>
-//         ))}
-//       </Grid>
-//     </Box>
-//   );
-// };
 
 export const Pricing = () => {
   const tiers = [

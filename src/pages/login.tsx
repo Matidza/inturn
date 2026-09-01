@@ -129,7 +129,7 @@ export const Login: React.FC = () => {
         }}>
           <div className="lb1"/><div className="lb2"/><div className="lb3"/>
 
-          {/* Logo */}
+          {/* Logo 
           <Stack direction="row" spacing={1} alignItems="center" sx={{ position:"relative", zIndex:1 }}>
             <Box sx={{ width:34, height:34, borderRadius:"10px", background:P, display:"flex", alignItems:"center", justifyContent:"center" }}>
               <HandshakeOutlined sx={{ fontSize:18, color:"#fff" }}/>
@@ -137,7 +137,7 @@ export const Login: React.FC = () => {
             <Typography sx={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"1.25rem", color:"#fff", letterSpacing:"-0.01em" }}>
               inTURN
             </Typography>
-          </Stack>
+          </Stack>*/}
 
           {/* Headline + perks */}
           <Box sx={{ position:"relative", zIndex:1 }}>
@@ -175,15 +175,7 @@ export const Login: React.FC = () => {
         {/* ── RIGHT FORM ──────────────────────────────────── */}
         <Box sx={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", px:{ xs:3, sm:6, md:10 }, py:6, position:"relative" }}>
 
-          {/* Mobile logo */}
-          <Stack direction="row" spacing={1} alignItems="center"
-            sx={{ display:{ xs:"flex", lg:"none" }, position:"absolute", top:24, left:24 }}>
-            <Box sx={{ width:30, height:30, borderRadius:"8px", background:P, display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <HandshakeOutlined sx={{ fontSize:16, color:"#fff" }}/>
-            </Box>
-            <Typography sx={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"1.1rem", color:INK }}>inTURN</Typography>
-          </Stack>
-
+          
           <Box sx={{ width:"100%", maxWidth:400 }}>
 
             {/* Heading */}

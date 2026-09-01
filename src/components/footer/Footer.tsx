@@ -123,10 +123,10 @@ const Footer = () => {
                   </Typography>
                   <Typography
                     component="a"
-                    href="mailto:matidza46@gmail.com"
+                    href="mailto:inturnsa@gmail.com"
                     sx={{ display: "block", fontSize: 13.5, color: INK2, textDecoration: "none", "&:hover": { color: P } }}
                   >
-                    matidza46@gmail.com
+                    inturnsa@gmail.com
                   </Typography>
                 </Box>
               </Stack>

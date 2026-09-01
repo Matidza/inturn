@@ -8,7 +8,7 @@ import Settings from "./Settings"
 import NewService from "./NewService"
 import Analytics from "./Analytics"
 import Dashboard from "./dashboard"
-import Bookings from "./Bookings"
+import Bookings from "./bookings"
 
 
 export {

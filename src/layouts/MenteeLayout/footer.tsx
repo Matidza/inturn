@@ -1,71 +1,11 @@
-
-
-// import { Box, Container, Grid, Typography, Link } from "@mui/material";
-
-// const Footer = () => {
-//   return (
-//     <Box sx={{ backgroundColor: "#050A12", color: "white", py: 6 }}>
-//       <Container maxWidth="lg">
-//         <Grid container spacing={4}>
-//           <Grid item xs={12} md={4}>
-//             <Typography variant="h5">inTurn</Typography>
-//             <Typography sx={{ opacity: 0.7 }}>
-//               Level 2, 45 Martin Place
-//             </Typography>
-//             <Typography sx={{ opacity: 0.7 }}>
-//               1300 468 786
-//             </Typography>
-//           </Grid>
-
-//           <Grid item xs={6} md={2}>
-//             <Typography>Product</Typography>
-//             <Link display="block" color="inherit">Features</Link>
-//             <Link display="block" color="inherit">Pricing</Link>
-//           </Grid>
-
-//           <Grid item xs={6} md={2}>
-//             <Typography>Company</Typography>
-//             <Link display="block" color="inherit">About</Link>
-//             <Link display="block" color="inherit">Contact</Link>
-//           </Grid>
-
-//           <Grid item xs={6} md={2}>
-//             <Typography>Portals</Typography>
-//             <Link display="block" color="inherit">Professionals</Link>
-//             <Link display="block" color="inherit">Companies</Link>
-//           </Grid>
-
-//           <Grid item xs={6} md={2}>
-//             <Typography>Legal</Typography>
-//             <Link display="block" color="inherit">Privacy</Link>
-//             <Link display="block" color="inherit">Terms</Link>
-//           </Grid>
-//         </Grid>
-
-//         <Box sx={{ mt: 6, borderTop: "1px solid rgba(255,255,255,0.1)", pt: 3 }}>
-//           <Typography align="center" sx={{ opacity: 0.6 }}>
-//             © 2025 inTurn
-//           </Typography>
-//         </Box>
-//       </Container>
-//     </Box>
-//   );
-// };
-
-// export default Footer;
-
 import {
   Box,
   Typography,
-  Button,
   Grid,
   Stack,
-  CardMedia,
-  Container
 } from "@mui/material";
-import { KeyboardArrowRight, GifBox, YouTube } from "@mui/icons-material";
+import { YouTube, Instagram,  } from "@mui/icons-material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import { FacebookRounded, Instagram, Twitter } from "@mui/icons-material";
 import { LinkedIn } from "@mui/icons-material";
 import { X } from "@mui/icons-material";
 import { Link } from "react-router-dom";

@@ -16,6 +16,7 @@ const API_BASE = "http://localhost:1000/api/v1"
 // consolidated AIInterviewModel backend (one collection, scope=community|mine
 // on the list endpoint instead of two separate community/mine endpoints).
 const INTERVIEWS_ENDPOINT = "/mentee/interviews";
+const CREATE_INTERVIEW_ENDPOINT = "/mentee/create-ai-interview";
 
 
 const authFetch = async (path: string, opts: RequestInit = {}) => {
@@ -430,7 +431,7 @@ const CreateModal = ({ onClose, onCreate }: { onClose:()=>void; onCreate:(f:Form
     setCreating(true);
     setApiError(null);
     try {
-      const data = await authFetch(INTERVIEWS_ENDPOINT, {
+      const data = await authFetch(CREATE_INTERVIEW_ENDPOINT, {
         method: "POST",
         body: JSON.stringify({
           title:       form.title.trim(),
@@ -669,8 +670,8 @@ const AIInterviewHome: React.FC = () => {
 
         {/* ── HERO ─────────────────────────────────────── */}
         <Box sx={{ background:`#FFFFFF`, pt:{ xs:5, md:10 }, pb:{ xs:5, md:9 }, px:{ xs:2, md:6 }, position:"relative", overflow:"hidden" }}>
-          <Box className="hero-orb" sx={{ width:{ xs:240, md:380 }, height:{ xs:240, md:380 }, top:-100, right:-80 }}/>
-          <Box className="hero-orb" sx={{ width:{ xs:160, md:240 }, height:{ xs:160, md:240 }, bottom:-50, left:"5%", animationDelay:"4s" }}/>
+          {/* <Box className="hero-orb" sx={{ width:{ xs:240, md:380 }, height:{ xs:240, md:380 }, top:-100, right:-80 }}/>
+          <Box className="hero-orb" sx={{ width:{ xs:160, md:240 }, height:{ xs:160, md:240 }, bottom:-50, left:"5%", animationDelay:"4s" }}/> */}
 
           <Box maxWidth="lg" mx="auto" sx={{ position:"relative", zIndex:1 }}>
             {/* Badge */}

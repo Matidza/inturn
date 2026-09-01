@@ -1,91 +1,33 @@
-import {
-  Authenticated,
-  Refine,
-  type AuthProvider,
-} from "@refinedev/core";
+import axios from "axios";
+import { useEffect } from "react";
+import HMM4750 from "./pages/4750";
+import { parseJwt } from "./utils/parse-jwt";
 
-import {
-  DevtoolsProvider,
-} from "@refinedev/devtools";
-
-import {
-  RefineKbar,
-  RefineKbarProvider,
-} from "@refinedev/kbar";
-
-import {
-  ErrorComponent,
-  RefineSnackbarProvider,
-  useNotificationProvider,
-} from "@refinedev/mui";
-
+import { dataProvider } from "./providers/data";
+import PublicLayout from "./layouts/PublicLayout";
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 
-import routerProvider, {
-  CatchAllNavigate,
-  UnsavedChangesNotifier,
-  DocumentTitleHandler,
-} from "@refinedev/react-router";
+import { RefineKbar,RefineKbarProvider } from "@refinedev/kbar";
+import { FindAnswers, InterviewCVTip, ReadMore } from "./pages/more";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { Authenticated, Refine, type AuthProvider } from "@refinedev/core";
 
-import axios from "axios";
-import { useEffect } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Outlet,
-} from "react-router-dom";
+import { ErrorComponent, RefineSnackbarProvider, useNotificationProvider } from "@refinedev/mui";
+import { refreshAccessToken, scheduleTokenRefresh, clearScheduledRefresh, markTokenIssued,} from "./utils/tokenRefresh";
+import routerProvider, { CatchAllNavigate, UnsavedChangesNotifier, DocumentTitleHandler } from "@refinedev/react-router";
+
 
 // Public Routs
-import {
-  Applications,
-  Features,
-  Login,
-  Home,
-  CookieSettings,
-  PrivacyPolicy,
-  TermsOfService,
-  Signup
-} from "./pages";
-
-
-import {
-  AboutUs,
-  Blog,
-  CompanyPortal,
-  ContactUs,
-  HowItWorks,
-  Pricing,
-  ProfessionalPortal,
-  StudentPortal,
-  Support
-} from "./pages/footer";
-
-import {
-  CompanyDashboard,
-  FindAnswers,
-  InterviewCVTip,
-  ProfessionalDashboard,
-  ReadMore,
-  StudentDashboard
-} from "./pages/more";
 // import { Professionals, ProfessionalCardDetails } from "./pages/mentee";
+import AppRoutes from "./routes/AppRoutes";
 import Professionals from "./pages/professionals";
 import ProfessionalCardDetails from "./pages/professionalDetails";
+import { Applications, Features, Login, Home, CookieSettings, PrivacyPolicy, TermsOfService, Signup } from "./pages";
+import { AboutUs, Blog, CompanyPortal, ContactUs, HowItWorks, Pricing, ProfessionalPortal, StudentPortal, Support } from "./pages/footer";
 
 
-import HMM4750 from "./pages/4750";
-import AppRoutes from "./routes/AppRoutes";
-import { parseJwt } from "./utils/parse-jwt";
-import {
-  refreshAccessToken,
-  scheduleTokenRefresh,
-  clearScheduledRefresh,
-  markTokenIssued,
-} from "./utils/tokenRefresh";
-import { dataProvider } from "./providers/data";
-import PublicLayout from "./layouts/PublicLayout";
+
 
 
 /* Axios */
@@ -99,6 +41,8 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
+
+
 // Reactive safety net: catches a 401 (e.g. clock drift, a backgrounded
 // tab whose timer didn't fire) and refreshes on demand. Shares the same
 // deduped refreshAccessToken() as the proactive 14-min timer, so the two
@@ -107,7 +51,6 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -116,6 +59,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       const ok = await refreshAccessToken();
+
       if (ok) {
         return axiosInstance(originalRequest);
       } else {
@@ -125,10 +69,10 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       }
     }
-
     return Promise.reject(error);
   }
 );
+
 
 /* Auth */
 const authProvider: AuthProvider = {
@@ -137,7 +81,6 @@ const authProvider: AuthProvider = {
     if (!profile) {
       return { success: false, error: { name: "LoginError", message: "Invalid credential" } };
     }
-
     try {
       const response = await fetch(`http://localhost:1000/api/v1/auth/create-user`, {
         method: "POST",
@@ -147,6 +90,7 @@ const authProvider: AuthProvider = {
           name: profile.name,
           email: profile.email,
           avatar: profile.picture,
+          email_verified: profile.email_verified,
           role,
         }),
       });
@@ -164,7 +108,6 @@ const authProvider: AuthProvider = {
       // picked on the login screen. That's what fixes the redirect bug
       // even outside the mismatch case.
       const actualRole = data.user?.role ?? "mentee";
-
       const user = {
         ...profile,
         role: actualRole,
@@ -177,8 +120,7 @@ const authProvider: AuthProvider = {
       localStorage.setItem("token", credential);
       markTokenIssued();
 
-      const redirectTo =
-        actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
+      const redirectTo = actualRole === "admin" ? "/admin" : actualRole === "professional" ? "/pro" : "/mentee";
 
       scheduleTokenRefresh(() => {
         localStorage.removeItem("token");
@@ -234,7 +176,6 @@ const authProvider: AuthProvider = {
         // this for Refine's flow, it doesn't await or block on it
       });
     }
-
     return { success: true, redirectTo: "/login" };
   },
 };
@@ -257,84 +198,73 @@ function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
-        {/* <ColorModeContextProvider> */}
-          <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-
-          <RefineSnackbarProvider>
-            {/* <DevtoolsProvider> */}
-              <Refine
-                dataProvider={dataProvider}
-                notificationProvider={useNotificationProvider}
-                routerProvider={routerProvider}
-                authProvider={authProvider}
-                options={{
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                }}
+        <CssBaseline />
+        <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+        <RefineSnackbarProvider>
+          <Refine
+            dataProvider={dataProvider}
+            notificationProvider={useNotificationProvider}
+            routerProvider={routerProvider}
+            authProvider={authProvider}
+            options={{
+              syncWithLocation: true,
+              warnWhenUnsavedChanges: true,
+            }}
+          >
+            <Routes>
+              {/* Protected Routes */}
+              <Route
+                element={
+                  <Authenticated key="authenticated-routes" fallback={<CatchAllNavigate to="/login" />}>
+                    <Outlet />
+                  </Authenticated>
+                }
               >
-                <Routes>
+                <Route path="/*" element={<AppRoutes />} />
+              </Route>
 
-                  {/* Protected */}
-                  <Route
-                    element={
-                      <Authenticated key="authenticated-routes" fallback={<CatchAllNavigate to="/login" />}>
-                        <Outlet />
-                      </Authenticated>
-                    }
-                  >
-                    <Route path="/*" element={<AppRoutes />} />
-                  </Route>
+              {/* Public Routes */}
+              <Route element={<PublicLayout />}>
+                {/* Header Links */}
+                <Route path="/" element={<Home />}/>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup/>} />
+                <Route path="/features" element={<Features />}/>
+                <Route path="/applications" element={<Applications />}/>
+                <Route path="/professionals" element={<Professionals />}/>
+                <Route path="/professional-details/:id" element={<ProfessionalCardDetails />}/>
 
-                  {/* Public */}
-                  <Route element={<PublicLayout />}>
+                <Route path="/find-answers" element={<FindAnswers />}/>
+                <Route path="/tips" element={<InterviewCVTip />}/>
+                <Route path="/read-more" element={<ReadMore />}/>
 
-                    {/* Header Links */}
-                    <Route path="/" element={<Home />}/>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup/>} />
-                    <Route path="/features" element={<Features />}/>
-                    <Route path="/applications" element={<Applications />}/>
-                    <Route path="/professionals" element={<Professionals />}/>
-                    <Route path="/professional-details/:id" element={<ProfessionalCardDetails />}/>
-
-
-                    <Route path="/company-dashboard" element={<CompanyDashboard />}/>
-                    <Route path="/find-answers" element={<FindAnswers />}/>
-                    <Route path="/tips" element={<InterviewCVTip />}/>
-                    <Route path="/professional-dashboard" element={<ProfessionalDashboard />}/>
-                    <Route path="/read-more" element={<ReadMore />}/>
-                    <Route path="/student-dashboard" element={<StudentDashboard />}/>
-
-                    {/* Footer Links */}
-                    <Route path="/student-portal" element={<StudentPortal />}/>
-                    <Route path="/professional-portal" element={<ProfessionalPortal />}/>
-                    <Route path="/company-portal" element={<CompanyPortal />}/>
-                    <Route path="/how-it-works" element={<HowItWorks />}/>
-                    <Route path="/pricing" element={<Pricing />}/>
-                    <Route path="/blog" element={<Blog />}/>
-                    <Route path="/support" element={<Support />}/>
-                    <Route path="/about-us" element={<AboutUs />}/>
-                    <Route path="/contact-us" element={<ContactUs />}/>
+                {/* Footer Links */}
+                <Route path="/student-portal" element={<StudentPortal />}/>
+                <Route path="/professional-portal" element={<ProfessionalPortal />}/>
+                <Route path="/company-portal" element={<CompanyPortal />}/>
+                <Route path="/how-it-works" element={<HowItWorks />}/>
+                <Route path="/pricing" element={<Pricing />}/>
+                <Route path="/blog" element={<Blog />}/>
+                <Route path="/support" element={<Support />}/>
+                <Route path="/about-us" element={<AboutUs />}/>
+                <Route path="/contact-us" element={<ContactUs />}/>
 
 
-                    <Route path="/privacy-policy" element={<PrivacyPolicy />}/>
-                    <Route path="/terms-of-service" element={<TermsOfService />}/>
-                    <Route path="/250904/0324/4750" element={<HMM4750 />}/>
-                    <Route path="/cookie-settings" element={<CookieSettings />}/>
-                  </Route>
+                <Route path="/privacy-policy" element={<PrivacyPolicy />}/>
+                <Route path="/terms-of-service" element={<TermsOfService />}/>
+                <Route path="/250904/0324/4750" element={<HMM4750 />}/>
+                <Route path="/cookie-settings" element={<CookieSettings />}/>
+              </Route>
 
-                  {/* Fallback */}
-                  <Route path="*" element={<ErrorComponent />} />
-                </Routes>
+              {/* Fallback Routes */}
+              <Route path="*" element={<ErrorComponent />} />
+            </Routes>
 
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Refine>
-            {/* </DevtoolsProvider> */}
-          </RefineSnackbarProvider>
-        {/* </ColorModeContextProvider> */}
+            <RefineKbar />
+            <UnsavedChangesNotifier />
+            <DocumentTitleHandler />
+          </Refine>
+        </RefineSnackbarProvider>
       </RefineKbarProvider>
     </BrowserRouter>
   );

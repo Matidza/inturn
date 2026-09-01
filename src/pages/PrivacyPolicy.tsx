@@ -293,8 +293,8 @@ const SECTIONS = [
           If you have questions, concerns, or requests regarding this Privacy Policy or how we handle your personal data, please reach out. We aim to respond within 48 hours.
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <a href="mailto:matidza46@gmail.com" className="cta-btn">
-            <Mail size={15} /> matidza46@gmail.com
+          <a href="mailto:inturnsa@gmail.com" className="cta-btn">
+            <Mail size={15} /> inturnsa@gmail.com
           </a>
           <Link to="/contact-us" className="cta-btn" style={{ background: "transparent", color: P, border: `1.5px solid ${P}` }}>
             Contact form <ArrowRight size={14} />

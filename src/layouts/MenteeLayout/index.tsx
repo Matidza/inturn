@@ -5,8 +5,8 @@ import Sider from "./sider";
 import ScrollToTop from "../../components/common/scrolltop";
 import { ThemeProvider, useThemeMode } from "../../components/common/themecontext";
 
-const DRAWER_WIDTH    = 220;
-const COLLAPSED_WIDTH = 72;
+const DRAWER_WIDTH    = 195;
+const COLLAPSED_WIDTH = 60;
 const HEADER_HEIGHT   = 64;
 
 const P      = "#7F42E7";
@@ -19,7 +19,12 @@ const INK2   = "#4A4A5A";
 const KNOWN_ROUTES = new Set([
   "/mentee",
   "/mentee/ai-home",
+  "/mentee/ai-create",
   "/mentee/ai-practice",
+  
+  "/mentee/ai-browse",
+  "/mentee/ai-interview/new",
+
   "/ai-interview/:id",
   "/mentee/cv-analyzer",
   "/mentee/interviews",

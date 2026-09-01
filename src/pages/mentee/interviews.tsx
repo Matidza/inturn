@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
-import { Box, Typography, Grid, Card, CardContent, Avatar, Stack, Chip, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Avatar, Stack, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
 import { Calendar, Clock, Video, XCircle, Star, AlertCircle, CreditCard, CheckCircle, ChevronRight, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 /* ── TOKENS ─────────────────────────────────────────────── */
 const P      = "#7F42E7";
 const P_DARK = "#5E2EC5";
-const P_MID  = "#B893F6";
+// const P_MID  = "#B893F6";
 const P_LITE = "#F0EAFD";
 const INK    = "#0D0D12";
 const INK2   = "#4A4A5A";
@@ -283,7 +283,7 @@ const WHITE = "#fff";
 const InterviewCard = ({
   interview,
   onCancel,
-  onPay,
+  // onPay,
 }: {
   interview: Interview;
   onCancel: (iv:Interview) => void;

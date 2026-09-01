@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Box, Typography, Stack, Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   FileText, Users, CreditCard, Briefcase, AlertTriangle,
@@ -341,8 +341,8 @@ const SECTIONS = [
           For any questions, concerns, or legal notices regarding these Terms of Service, please contact us. We aim to respond within 48 hours.
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <a href="mailto:matidza46@gmail.com" className="cta-btn cta-primary">
-            <Mail size={15} /> matidza46@gmail.com
+          <a href="mailto:inturnsa@gmail.com" className="cta-btn cta-primary">
+            <Mail size={15} /> inturnsa@gmail.com
           </a>
           <Link to="/contact-us" className="cta-btn cta-ghost">
             Contact form <ArrowRight size={14} />

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Box, Typography, Grid, Stack, Collapse } from "@mui/material";
-import { Search, Headphones, CreditCard, Calendar, Wrench, ChevronDown, ChevronUp, ArrowRight, MessageSquare } from "lucide-react";
+import { Headphones, CreditCard, Calendar, Wrench, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 
-const P = "#7F42E7"; const P_DARK = "#5E2EC5"; const P_LITE = "#F0EAFD";
-const INK = "#0D0D12"; const INK2 = "#5C5C72"; const BORDER = "#E8E3F5"; const OFF = "#F7F6FC";
+const P = "#7F42E7";
+const P_DARK = "#5E2EC5"; 
+const P_LITE = "#F0EAFD";
+const INK = "#0D0D12"; 
+const INK2 = "#5C5C72"; 
+const BORDER = "#E8E3F5"; 
+const OFF = "#F7F6FC";
 
 const sharedCss = `
   *, *::before, *::after { box-sizing:border-box; }

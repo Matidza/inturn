@@ -9,9 +9,9 @@ import { Link, NavLink } from "react-router-dom";
 import { HandshakeOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { useLogout, useGetIdentity } from "@refinedev/core";
+import { useLogout } from "@refinedev/core";
 import { navbarLinks } from "../../constants/mentee/siderlinks";
-import { ThemeProvider, useThemeMode } from "../../components/common/themecontext";
+import { useThemeMode } from "../../components/common/themecontext";
 
 /* ── icons for the toggle ── */
 import { Sun, Moon } from "lucide-react";
@@ -22,8 +22,8 @@ interface SideBarProps {
   setCollapsed: (val: boolean) => void;
 }
 
-const DRAWER_WIDTH    = 220;
-const COLLAPSED_WIDTH = 72;
+const DRAWER_WIDTH    = 195;
+const COLLAPSED_WIDTH = 60;
 
 /* ── TOKEN HELPERS ───────────────────────────────────────── */
 const tokens = (dark: boolean) => ({
@@ -316,7 +316,7 @@ const Sider = forwardRef<HTMLDivElement, SideBarProps>(
               <Box sx={{ width:30, height:30, borderRadius:"8px", background:"#7F42E7", display:"flex", alignItems:"center", justifyContent:"center" }}>
                 <HandshakeOutlined sx={{ fontSize:16, color:"#fff" }}/>
               </Box>
-              <Typography sx={{ fontWeight:800, fontSize:"1.1rem", color:t.text, fontFamily:"'DM Sans',sans-serif" }}>Ndima</Typography>
+              <Typography sx={{ fontWeight:800, fontSize:"1.1rem", color:t.text, fontFamily:"'DM Sans',sans-serif" }}>inTurn</Typography>
             </Stack>
 
             <Divider sx={{ borderColor: t.divider, mb:1 }}/>
@@ -400,7 +400,7 @@ const Sider = forwardRef<HTMLDivElement, SideBarProps>(
                   component={Link} to="/mentee"
                   sx={{ fontWeight:800, fontSize:"1.2rem", color:t.text, textDecoration:"none", letterSpacing:"-0.01em", fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap" }}
                 >
-                  Ndima
+                  inTurn
                 </Typography>
               </Stack>
             )}

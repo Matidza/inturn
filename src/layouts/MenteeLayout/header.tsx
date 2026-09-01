@@ -1,13 +1,8 @@
-
-
-import { ArrowDownward, KeyboardArrowDown } from "@mui/icons-material";
 import { AppBar, Toolbar, Typography, Button, Stack, Box, Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import IconButton from "@mui/material/IconButton";
 import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
-import { useGetIdentity } from "@refinedev/core";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import { HandshakeOutlined } from "@mui/icons-material";
@@ -15,15 +10,12 @@ import { HandshakeOutlined } from "@mui/icons-material";
 const Header = () => {
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
-
-  const { data: users } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
 
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/login";
   };
-  // "#a5ccf8ff"
 
   return (
     <>

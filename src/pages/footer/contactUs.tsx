@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Stack, Collapse } from "@mui/material";
-import { Search, Headphones, CreditCard, Calendar, Wrench, ChevronDown, ChevronUp, ArrowRight, MessageSquare } from "lucide-react";
+import { Box, Typography, Grid, Stack } from "@mui/material";
 
-const P = "#7F42E7"; const P_DARK = "#5E2EC5"; const P_LITE = "#F0EAFD";
-const INK = "#0D0D12"; const INK2 = "#5C5C72"; const BORDER = "#E8E3F5"; const OFF = "#F7F6FC";
+
+const P = "#7F42E7"; 
+const P_DARK = "#5E2EC5"; 
+const P_LITE = "#F0EAFD";
+const INK = "#0D0D12"; 
+const INK2 = "#5C5C72"; 
+const BORDER = "#E8E3F5"; 
+const OFF = "#F7F6FC";
 
 const sharedCss = `
   *, *::before, *::after { box-sizing:border-box; }
@@ -20,38 +25,6 @@ const sharedCss = `
   .input-field::placeholder{color:${INK2};opacity:.6}
 `;
 
-const SUPPORT_CATS = [
-  { icon:<Headphones size={18}/>, title:"Account issues",      desc:"Login problems, password reset, account settings" },
-  { icon:<CreditCard size={18}/>, title:"Payments & billing",  desc:"Subscriptions, refunds, and payment methods" },
-  { icon:<Calendar size={18}/>,   title:"Session management",  desc:"Booking, cancellations, and rescheduling" },
-  { icon:<Wrench size={18}/>,     title:"Technical support",   desc:"Bugs, errors, or platform issues" },
-];
-
-const FAQS = [
-  { q:"How do I book a session?",         a:"Browse professionals, select a session type, choose a time slot, confirm your booking, and pay. The professional then approves and you receive a confirmation." },
-  { q:"How do payments work?",            a:"Payment is charged only after a professional approves your session request. You'll receive a secure payment link via email. We accept all major cards." },
-  { q:"Can I cancel or reschedule?",      a:"Yes — sessions can be cancelled or rescheduled more than 24 hours before the start time. Within 24 hours, standard cancellation terms apply." },
-  { q:"How do I become a mentor?",        a:"Sign up as a professional, complete your profile with your experience and specialty, set your availability and rates, and you're live. Students can find and book you immediately." },
-  { q:"Is my payment information safe?",  a:"Yes. We use industry-standard encryption and work with PCI-compliant payment processors. We never store your full card details." },
-  { q:"How does the AI interview work?",  a:"Our AI asks you real interview questions for your target role, listens to your responses via text or voice, scores each answer, and delivers detailed feedback instantly." },
-];
-
-const FaqItem = ({ q, a }: { q:string; a:string }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <Box sx={{ border:`1.5px solid ${open?P:BORDER}`, borderRadius:"14px", background:"#fff", overflow:"hidden", transition:"border-color .15s", mb:1.25 }}>
-      <Box onClick={() => setOpen(o=>!o)} sx={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", p:2.5, cursor:"pointer", gap:2 }}>
-        <Typography sx={{ fontFamily:"'DM Sans',sans-serif", fontWeight:600, fontSize:14.5, color:INK, lineHeight:1.4 }}>{q}</Typography>
-        <Box sx={{ color:open?P:INK2, flexShrink:0, mt:.2 }}>{open?<ChevronUp size={16}/>:<ChevronDown size={16}/>}</Box>
-      </Box>
-      <Collapse in={open}>
-        <Box sx={{ px:2.5, pb:2.5 }}>
-          <Typography sx={{ fontSize:14, color:INK2, lineHeight:1.75 }}>{a}</Typography>
-        </Box>
-      </Collapse>
-    </Box>
-  );
-};
 
 
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
@@ -96,7 +69,7 @@ export const ContactUs = () => {
                 <Typography sx={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:"1.1rem", color:INK, mb:3 }}>Contact info</Typography>
                 <Stack spacing={3}>
                   {[
-                    { icon:<Mail size={16}/>,    label:"Email",    val:"matidza46@gmail.com",          href:"mailto:matidza46@gmail.com" },
+                    { icon:<Mail size={16}/>,    label:"Email",    val:"inturnsa@gmail.com",          href:"mailto:inturnsa@gmail.com" },
                     { icon:<Phone size={16}/>,   label:"Phone",    val:"+27 66 434 7295",               href:"tel:+27664347295" },
                     { icon:<MapPin size={16}/>,  label:"Location", val:"Vereeniging, Gauteng, SA",     href:"#" },
                   ].map(({ icon, label, val, href }) => (
@@ -139,13 +112,13 @@ export const ContactUs = () => {
                       <Grid item xs={12} sm={6}>
                         <div className="form-group">
                           <label className="form-label">Full name</label>
-                          <input className="input-field" placeholder="Zwivhuya Mukwevho" value={form.name} onChange={set("name")}/>
+                          <input className="input-field" placeholder="Name Surname" value={form.name} onChange={set("name")}/>
                         </div>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <div className="form-group">
                           <label className="form-label">Email</label>
-                          <input className="input-field" type="email" placeholder="zwivhuya@email.com" value={form.email} onChange={set("email")}/>
+                          <input className="input-field" type="email" placeholder="example@email.com" value={form.email} onChange={set("email")}/>
                         </div>
                       </Grid>
                     </Grid>

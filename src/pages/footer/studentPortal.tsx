@@ -2,9 +2,9 @@
 // StudentPortal.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 import React from "react";
-import { Box, Typography, Grid, Card, CardContent, Button, Stack, Avatar, Rating } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button, Stack, Rating } from "@mui/material";
 import { Link } from "react-router-dom";
-import { ArrowRight, Brain, FileText, Users, CheckCircle2, Star } from "lucide-react";
+import { ArrowRight, Brain, FileText, Users, Star } from "lucide-react";
 
 const P = "#7F42E7";
 const P_DARK = "#5E2EC5";

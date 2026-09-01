@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate,  } from "react-router-dom";
 import {
-  Box, Typography, Stack, Grid, LinearProgress,
-  Chip, Collapse, Divider,
+  Box, Typography, Stack, Grid, 
+  Chip, Collapse
 } from "@mui/material";
 import {
-  TrendingUp, MessageSquare, Target, Mic, Clock, ChevronDown,
-  ChevronUp, RotateCcw, Briefcase, Star, ArrowRight, CheckCircle2,
-  AlertCircle, Info,
+  MessageSquare, Target, Clock, ChevronDown,
+  ChevronUp, Star, ArrowRight, CheckCircle2,
+  Info,
 } from "lucide-react";
 
 /* ── TOKENS ─────────────────────────────────────────────────────────────── */
@@ -234,7 +234,7 @@ const DimBar = ({ label, score, color }: { label:string; score:number; color:str
 const QACard = ({ q, idx }: { q: typeof MOCK_RESULT.questions[0]; idx: number }) => {
   const [open, setOpen] = useState(idx === 0);
   const tagClass = q.score >= 80 ? "tag-good" : q.score >= 70 ? "tag-avg" : "tag-weak";
-  const tagColor = q.score >= 80 ? GREEN : q.score >= 70 ? AMBER : RED;
+  // const tagColor = q.score >= 80 ? GREEN : q.score >= 70 ? AMBER : RED;
 
   return (
     <div className="qa-card">
@@ -289,7 +289,7 @@ const QACard = ({ q, idx }: { q: typeof MOCK_RESULT.questions[0]; idx: number })
 
 /* ── MAIN COMPONENT ─────────────────────────────────────────────────────── */
 const Feedback: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const data = MOCK_RESULT; // replace with useLocation state or API call
 
   return (

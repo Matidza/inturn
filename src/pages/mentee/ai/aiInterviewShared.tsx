@@ -5,6 +5,7 @@ import React from "react";
    ═══════════════════════════════════════════════════════════ */
 export const API_BASE = "http://localhost:1000/api/v1";
 export const INTERVIEWS_PATH = "/mentee/interviews";
+export const CREATE_INTERVIEWS_PATH = "/mentee/create";
 
 export const authFetch = async (path: string, opts: RequestInit = {}) => {
   const token = localStorage.getItem("token") ?? "";
